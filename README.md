@@ -17,6 +17,8 @@ library(crossfire)
 
 ## Functions
 
+# crossfire
+
 `crossfire` has 3 functions: `fogocruzado_signin`, `get_fogocruzado` and `get_cities`.
 
 * `fogocruzado_signin` is used to give access to Fogo Cruzado's API. To access Fogo Cruzado's API, [users should be registered](https://api.fogocruzado.org.br/register) and insert their e-mail and password for authentication. Thus, the function registers these information on the current R session, so that it can be used to obtain the Bearer token to extract data using the API. 
@@ -39,7 +41,7 @@ fogocruzado_security <- get_fogocruzado(security_agent = 1, source = 2)
 
 ## More information
 
-For more information on how the package works and for a complete list of functions, see the vignettes (in English and Portuguese).
+For more information on how the package works and for a complete list of functions, see the vignettes (in [English](https://github.com/voltdatalab/crossfire/blob/master/Introduction_crossfire.md) and [Portuguese](https://github.com/voltdatalab/crossfire/blob/master/Introducao_crossfire.md)).
 
 ## Authors
 
