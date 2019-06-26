@@ -1,3 +1,5 @@
+# crossfire
+
 `crossfire` is a package created to give easier access to the datasets of the project [Fogo Cruzado](https://fogocruzado.org.br/), which is a digital collaboration platform to register gun shootings in the metropolitan areas of Rio de Janeiro and Recife.
 
 The package facilitates data extraction from the [project open-data API](https://api.fogocruzado.org.br/), developed by [Volt Data Lab](https://www.voltdata.info/en-lg).
@@ -16,8 +18,6 @@ library(crossfire)
 ```
 
 ## Functions
-
-# crossfire
 
 `crossfire` has 3 functions: `fogocruzado_signin`, `get_fogocruzado` and `get_cities`.
 
