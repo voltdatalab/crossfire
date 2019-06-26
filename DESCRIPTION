@@ -1,0 +1,23 @@
+Package: crossfire
+Type: Package
+Title: Extract data of Fogo Cruzado's repository of shootings in Brazil
+Version: 0.1.0
+Authors@R: c(
+    person("Lucas", "Gelape", , "lucas@voltdata.info", c("aut", "cre")),
+    person("Sérgio", "Spagnuolo", , "sergio@voltdata.info", c("aut"))
+    )
+Maintainer: Lucas Gelape <lucas@voltdata.info>
+Description: This package gives a set of functions to extract data from the API of 
+    Fogo Cruzado's data repository of shootings in Brazil (https://api.fogocruzado.org.br/).
+    Currently, the repository contains geocoded data from shootings and gun shots fired
+    in the metropolitan areas of Rio de Janeiro (since July 2016) and Recife (since April 2018).
+License: What license is it under?
+Encoding: UTF-8
+LazyData: true
+Imports:
+    dplyr (>= 0.8.0.1),
+    httr (>= 1.4.0),
+    jsonlite (>= 1.6),
+    rlang (>= 0.3.4),
+    magrittr (>= 1.5)
+RoxygenNote: 6.1.1
