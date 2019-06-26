@@ -11,9 +11,7 @@ Currently, the `crossfire` package can be installed directly from its GitHub rep
 ```
 if (!require("devtools")) install.packages("devtools")
 devtools::install_github("voltdatalab/crossfire")
-```
 
-```
 library(crossfire)
 ```
 
