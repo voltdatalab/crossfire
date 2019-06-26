@@ -31,7 +31,7 @@ As noted, the function sets the e-mail and password in the current R environment
 
 ```
 # Registers user and password
-fogocruzado_signin(email = "exemplo@conta_exemplo.com", password = "senha")
+fogocruzado_signin(email = "example@account_exeample.com", password = "pass")
 ```
 
 ### get_fogocruzado
