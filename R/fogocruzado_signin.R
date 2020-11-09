@@ -48,14 +48,8 @@
 fogocruzado_signin <- function(email,
                             password){
 
-  if(Sys.getenv("email_fogocruzado") == ""){
-
   Sys.setenv("email_fogocruzado" = email,
              "password_fogocruzado" = password)
-
-  get_token_fogocruzado()
-
-  } else
 
   get_token_fogocruzado()
 

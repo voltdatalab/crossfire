@@ -19,8 +19,8 @@ fogocruzado_key <- function (){
 get_token_fogocruzado <- function(){
 
   post_fogocruzado <- httr::POST("https://api.fogocruzado.org.br/api/v1/auth/login",
-                                 body = list(email = Sys.setenv("email_fogocruzado"),
-                                             password = Sys.setenv("password_fogocruzado")))
+                                 body = list(email = Sys.getenv("email_fogocruzado"),
+                                             password = Sys.getenv("password_fogocruzado")))
 
   post_fogocruzado <- httr::content(post_fogocruzado, as = "text", encoding = "utf8")
 

@@ -24,7 +24,6 @@
 #'   to filter observations according to the presence of security agents in
 #'   the occurrence. Can assume the values of 1 for "yes" and 0 for "no".
 #'   Default returns all occurrences.
-#' @param source Number (\code{integer}) indicating if the user wants to filter
 #'   observations according to the source who reported the occurrence.
 #'   Can assume the values of 0 for users, 1 for press and 2 for police.
 #'   Default returns all occurrences.
@@ -101,7 +100,7 @@ get_fogocruzado <- function(city = NULL,
 
   if(!is.data.frame(banco)) {
 
-    fogocruzado_signin()
+    get_token_fogocruzado()
 
     banco <- extract_data_api()
 
