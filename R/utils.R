@@ -40,11 +40,11 @@ get_token_fogocruzado <- function(){
 
 # Extract data from occurrences in Fogo Cruzado's API
 
-extract_data_api <- function(){
+extract_data_api <- function(link){
 
   message("\nExtracting data from Fogo Cruzado's API.\n \n...\n")
 
-  fogocruzado_request <- httr::GET("https://api.fogocruzado.org.br/api/v1/occurrences",
+  fogocruzado_request <- httr::GET(link,
                                    httr::add_headers(Authorization = fogocruzado_key()))
 
   fogocruzado_request_data <- httr::content(fogocruzado_request, as = "text", encoding = "utf8")
@@ -63,6 +63,8 @@ extract_cities_api <- function(){
 
   fogocruzado_cities <- httr::GET("https://api.fogocruzado.org.br/api/v1/cities",
                                 httr::add_headers(Authorization = fogocruzado_key()))
+
+  #Sys.sleep(1.0)
 
   fogocruzado_request_data <- httr::content(fogocruzado_cities, as = "text", encoding = "utf8")
 

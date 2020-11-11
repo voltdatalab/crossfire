@@ -36,7 +36,7 @@ fogocruzado_signin(email = "exemplo@conta_exemplo.com", password = "senha")
 
 ### get_fogocruzado
 
-A principal função do `crossfire` é a `get_fogocruzado`, que permite extrair desde recortes até todos os registros de tiroteios registrados pelo Fogo Cruzado. Ela retorna um banco de dados (`data.frame`) que traz em cada linha um registro e suas respectivas informações. A função possui os seguintes argumentos: `city`, `initial_date`, `final_date`, `state`, `security_agent` e `source`.
+A principal função do `crossfire` é a `get_fogocruzado`, que permite extrair recortes dos registros de tiroteios compilados pelo Fogo Cruzado. Ela retorna um banco de dados (`data.frame`) que traz em cada linha um registro e 67 colunas de informações sobre esta ocorrência. A função possui os seguintes argumentos: `city`, `initial_date`, `final_date`, `state` e `security_agent`.
 
 * O argumento `city` (cidade) permite filtrar os registros por algumas cidades. O padrão desse argumento retorna as ocorrências em todas as cidades. A lista completa de cidades (com a grafia de seus nomes) pode ser obtida usando a função `get_cities`.
 
@@ -48,11 +48,11 @@ fogocruzado_all <- get_fogocruzado()
 fogocruzado_rj_recife <- get_fogocruzado(city = c("Rio de Janeiro", "Recife"))
 ```
 
-* Os argumentos `initial_date` (data inicial) e `final_date` (data final) permitem filtrar as observações segundo a data inicial e a data final da ocorrência. [O Fogo Cruzado coleta dados sobre região metropolitana do Rio de Janeiro desde 05 de julho de 2016 e do Recife desde 01 de abril de 2018](https://fogocruzado.org.br/perguntas-frequentes/#1553708190396-78173b2a-059c). As datas devem ser incluídas como `character` no formato `"YYYY-MM-DD"` (Ano-Mês-Dia).
+* Os argumentos `initial_date` (data inicial) e `final_date` (data final) permitem filtrar as observações segundo a data inicial e a data final da ocorrência, sendo que o padrão da função é o dia da consulta como data final, e seis meses antes como data inicial. Na nova versão da API, limitamos as consultas do pacote a um período máximo de 210 dias (cerca de 7 meses), que podem abranger qualquer período disponibilizado. [O Fogo Cruzado coleta dados sobre região metropolitana do Rio de Janeiro desde 05 de julho de 2016 e do Recife desde 01 de abril de 2018](https://fogocruzado.org.br/perguntas-frequentes/#1553708190396-78173b2a-059c). As datas devem ser incluídas como `character` no formato `"YYYY-MM-DD"` (Ano-Mês-Dia).
 
 ```
 # Extrai todos os registros do ano de 2018
-fogocruzado_2018 <- get_fogocruzado(initial_date = "2018-01-01", final_date = "2018-12-31")
+fogocruzado_2018 <- get_fogocruzado(initial_date = "2018-07-01", final_date = "2018-12-31")
 ```
 
 * O argumento `state` possibilita selecionar os registros segundo o estado em que ocorreram. O padrão retorna todas as ocorrências.
@@ -62,18 +62,11 @@ fogocruzado_2018 <- get_fogocruzado(initial_date = "2018-01-01", final_date = "2
 fogocruzado_pe <- get_fogocruzado(state = "PE")
 ```
 
-* O argumento `security_agent` possibilita a seleção das ocorrências segundo a presença - `security_agent = 1` - ou não - `security_agent = 0` - das forças de segurança. 
+* Por fim, o argumento `security_agent` possibilita a seleção das ocorrências segundo a presença - `security_agent = 1` - ou não - `security_agent = 0` - das forças de segurança. 
 
 ```
 # Extrai os dados de todas as ocorrencias com presenca de agentes de seguranca
 fogocruzado_security <- get_fogocruzado(security_agent = 1)
-```
-
-* Por fim, o argumento `source` permite filtrar os registros segundo a fonte que reportou a ocorrência, que assume 3 valores: 0 no caso de usuários ("[a equipe de gestão de dados do Fogo Cruzado recebe informações diretas de parceiros que atuam in loco. Neste caso só são consideradas fontes conhecidas, com as quais já existe relacionamento prévio, como coletivos, comunicadores e moradores ativos localmente](https://fogocruzado.org.br/perguntas-frequentes/#1553710609713-711f6233-9412)"), 1 para a imprensa, e 2 para autoridades policiais.
-
-```
-# Obtem os dados de ocorrencias informadas pela imprensa
-fogocruzado_security <- get_fogocruzado(source = 1)
 ```
 
 ### get_cities

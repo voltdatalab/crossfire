@@ -36,7 +36,7 @@ fogocruzado_signin(email = "example@account_exeample.com", password = "pass")
 
 ### get_fogocruzado
 
-`crossfire` main function is `get_fogocruzado`. It allows the extraction from slices to the whole dataset of shootings registered by Fogo Cruzado. The function returns a data frame, in which each line corresponds to a shooting registered and its information. The function has the following arguments: `city`, `initial_date`, `final_date`, `state`, `security_agent` and `source`.
+`crossfire` main function is `get_fogocruzado`. It allows the extraction from slices to the whole dataset of shootings registered by Fogo Cruzado. The function returns a data frame, in which each line corresponds to a shooting registered and its information. The function has the following arguments: `city`, `initial_date`, `final_date`, `state`, and `security_agent`.
 
 * `city` allows to filter the observations by some cities. Their default returns all observations. The complete list of cities can be found using the `get_cities` function.
 
@@ -48,11 +48,11 @@ fogocruzado_all <- get_fogocruzado()
 fogocruzado_rj_recife <- get_fogocruzado(city = c("Rio de Janeiro", "Recife"))
 ```
 
-* `initial_date` and `final_date` let users select observations according to a certain period of time. Their default does not set any initial or final date ([however, Fogo Cruzado has been collecting data about Rio de Janeiro's metropolitan area since July 5th, 2016 and Recife's metropolitan area since April 1st, 2018](https://fogocruzado.org.br/perguntas-frequentes/#1553708190396-78173b2a-059c)). Initial and final dates should be included as `character` in the `"YYYY-MM-DD"` format.
+* `initial_date` and `final_date` let users select observations according to a certain period of time. The default is set to the current date as the final date and considers a 6-month interval to set the initial date. For the new API version, the package limits requests to a maximum of 210 days (roughly 7 months), which can cover any interval from the full dataset. ([Fogo Cruzado has been collecting data about Rio de Janeiro's metropolitan area since July 5th, 2016 and Recife's metropolitan area since April 1st, 2018](https://fogocruzado.org.br/perguntas-frequentes/#1553708190396-78173b2a-059c)). Initial and final dates should be included as `character` in the `"YYYY-MM-DD"` format.
 
 ```
 # Extract all data from 2018
-fogocruzado_2018 <- get_fogocruzado(initial_date = "2018-01-01", final_date = "2018-12-31")
+fogocruzado_2018 <- get_fogocruzado(initial_date = "2018-07-01", final_date = "2018-12-31")
 ```
 
 * `state` let users filter occurences according to the country's state where they happened. Default returns all observations.
@@ -67,13 +67,6 @@ fogocruzado_pe <- get_fogocruzado(state = "PE")
 ```
 # Extract data from occurents where security agents were present
 fogocruzado_security <- get_fogocruzado(security_agent = 1)
-```
-
-* `source` let users filter occurences according to the source who reported the shooting: 0 for credible users ([known sources, such as associations or local leaders](https://fogocruzado.org.br/perguntas-frequentes/#1553710609713-711f6233-9412)")), 1 for the press imprensa, and 2 for police authorities.
-
-```
-# Get data from shootings reported by the press
-fogocruzado_security <- get_fogocruzado(source = 1)
 ```
 
 ### get_cities

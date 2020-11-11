@@ -9,7 +9,7 @@
 #' @param email e-mail which was registered to access Fogo Cruzado's API.
 #' @param password password which was registered to access Fogo Cruzado's API.
 #'
-#' @return Sets "email_fogocruzado", "password_fogocruzado" and
+#' @return Sets "FOGO_CRUZADO_EMAIL", "FOGO_CRUZADO_PASSWORD" and
 #' "FOGO_CRUZADO_API_TOKEN" as environment variables.
 #'
 #' @details Fogo Cruzado's API (\url{https://api.fogocruzado.org.br/}) allows easier

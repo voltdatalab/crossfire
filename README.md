@@ -25,7 +25,7 @@ library(crossfire)
 
 * `fogocruzado_signin` is used to give access to Fogo Cruzado's API. To access Fogo Cruzado's API, [users should be registered](https://api.fogocruzado.org.br/register) and insert their e-mail and password for authentication. Thus, the function registers these information on the current R session, so that it can be used to obtain the Bearer token to extract data using the API. 
 
-* `get_fogocruzado` extracts slices or the whole dataset of shootings registered by Fogo Cruzado. The function returns a data frame, in which each line corresponds to a shooting registered and its information. It can also filter the data according to some parameters,  city/state - `city` and `state` -, initial and final date - `initial_date` and `final_date` -, the presence of security forces - `security_agent` -, and the information source - `source`.
+* `get_fogocruzado` extracts slices or the whole dataset of shootings registered by Fogo Cruzado. The function returns a data frame, in which each line corresponds to a shooting registered and its information. It can also filter the data according to some parameters,  city/state - `city` and `state` -, initial and final date - `initial_date` and `final_date` -, and the presence of security forces - `security_agent`. One should note that each request using the `crossfire` package needs to be under a 210 days (roughly 7 months) time interval, from any portion of the full dataset.
 
 ```
 # Extract data for all registered shootings
@@ -33,7 +33,7 @@ fogocruzado_all <- get_fogocruzado()
 
 # Extract data for shootings in the cities of Rio de Janeiro and Recife in 2018
 fogocruzado_rj_recife <- get_fogocruzado(city = c("Rio de Janeiro", "Recife"),
-                                         initial_date = "2018-01-01", final_date = "2018-12-31")
+                                         initial_date = "2018-07-01", final_date = "2018-12-31")
 
 # Extract data from occurents reported by the police and in which security agents were present
 fogocruzado_security <- get_fogocruzado(security_agent = 1, source = 2)

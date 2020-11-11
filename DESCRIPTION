@@ -19,5 +19,6 @@ Imports:
     httr (>= 1.4.0),
     jsonlite (>= 1.6),
     rlang (>= 0.3.4),
-    magrittr (>= 1.5)
+    magrittr (>= 1.5),
+    lubridate
 RoxygenNote: 6.1.1
