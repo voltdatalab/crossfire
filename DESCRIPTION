@@ -1,7 +1,7 @@
 Package: crossfire
 Type: Package
 Title: Extract data of Fogo Cruzado's repository of shootings in Brazil
-Version: 0.1.0
+Version: 1.0.0
 Authors@R: c(
     person("Lucas", "Gelape", , "lucas@voltdata.info", c("aut", "cre")),
     person("Sérgio", "Spagnuolo", , "sergio@voltdata.info", c("aut"))
@@ -20,5 +20,5 @@ Imports:
     jsonlite (>= 1.6),
     rlang (>= 0.3.4),
     magrittr (>= 1.5),
-    lubridate (>= 1.7.9)
+    lubridate
 RoxygenNote: 7.1.1
