@@ -2,9 +2,8 @@
 
 Na tabela abaixo, estão os nomes e descrição das colunas obtidas na requisição produzida pela função `get_fogocruzado`.
 
+|     |                COLUNA                   |                                                                              DESCRIÇÃO                                                                           |                                      
 |:---:|:---------------------------------------:|:----------------------------------------------------------------------------------------------------------------------------------------------------------------:|
-|     |                COLUNA                   |                                                                              DESCRIÇÃO                                                                           |
-|     |                                         |                                                                                                                                                                  |
 |  1  |            id\_ocorrencia               |                                                                          Id do registro                                                                          |
 |  2  |           local\_ocorrencia             |                                                                      Endereço da ocorrência                                                                      |
 |  3  |         latitude\_ocorrencia            |                                                                      Latitude da ocorrência                                                                      |
@@ -71,5 +70,5 @@ Na tabela abaixo, estão os nomes e descrição das colunas obtidas na requisiç
 | 64  |  data\_liberacao\_via\_oc               |                                                      Horário de liberação                                                                                        |
 | 65  |      outros\_recortes                   | lista de classificações de casos acompanhados pela equipe que não possuem campos específicos, chamados internamente de recortes                                  |
 | 66  |     motivo\_principal                   |                  motivo provável dos tiros - baseados em informações de imprensa, polícia ou fontes confiáveis                                                   |
-| 67  |    motivo\_complementar                 |      motivo provável dos tiros (caso haja mais de um) - baseados em informações de imprensa, polícia ou fontes confiáveis                                        | 
+| 67  |    motivo\_complementar                 |      motivo provável dos tiros (caso haja mais de um) - baseados em informações de imprensa, polícia ou fontes confiáveis                                        |
 
