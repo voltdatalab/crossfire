@@ -27,7 +27,8 @@
 #'   the occurrence. Can assume the values of 1 for "yes" and 0 for "no".
 #'   Default returns all occurrences.
 #'
-#' @return A \code{data.frame} with 67 columns.
+#' @return A \code{data.frame} with 67 columns. They are described \href{https://github.com/voltdatalab/crossfire/blob/master/tables/list_columns.md}{in English}
+#' and \href{https://github.com/voltdatalab/crossfire/blob/master/tables/lista_colunas.md}{in Portuguese}.
 #'
 #' @importFrom magrittr %>%
 #' @importFrom rlang .data

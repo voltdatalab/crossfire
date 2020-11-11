@@ -41,7 +41,7 @@ Default returns all occurrences.}
 }
 \value{
 A \code{data.frame} with 67 columns. They are described \href{https://github.com/voltdatalab/crossfire/blob/master/tables/list_columns.md}{in English}
-or \href{https://github.com/voltdatalab/crossfire/blob/master/tables/list_columns.md}{in Portuguese}.
+and \href{https://github.com/voltdatalab/crossfire/blob/master/tables/lista_colunas.md}{in Portuguese}.
 }
 \description{
 \code{get_fogocruzado()} extracts data from shootings and fire gun shots
