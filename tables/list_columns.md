@@ -1,6 +1,6 @@
 # Occurrences - columns names and description
 
-Na tabela abaixo, estão os nomes e descrição das colunas obtidas na requisição produzida pela função `get_fogocruzado`.
+In the following table, the user can find a description for each column of the API request from the `get_fogocruzado` function.
 
 |     |                COLUMN                   |                                                                              DESCRIPTION                                                                         |
 |:---:|:---------------------------------------:|:----------------------------------------------------------------------------------------------------------------------------------------------------------------:|
