@@ -70,7 +70,10 @@ get_fogocruzado <- function(city = NULL,
 
     get_token_fogocruzado()
 
-    banco <- extract_data_api()
+    message("Renovating token...")
+
+    banco <- extract_data_api(paste0("https://api.fogocruzado.org.br/api/v1/occurrences?data_ocorrencia[gt]=",
+                                     initial_date, "&data_ocorrencia[lt]=", final_date))
 
   } else
 
