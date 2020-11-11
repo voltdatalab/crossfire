@@ -12,7 +12,7 @@ fogocruzado_signin(email, password)
 \item{password}{password which was registered to access Fogo Cruzado's API.}
 }
 \value{
-Sets "email_fogocruzado", "password_fogocruzado" and
+Sets "FOGO_CRUZADO_EMAIL", "FOGO_CRUZADO_PASSWORD" and
 "FOGO_CRUZADO_API_TOKEN" as environment variables.
 }
 \description{

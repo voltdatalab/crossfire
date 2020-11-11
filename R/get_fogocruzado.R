@@ -28,8 +28,6 @@
 #'   Default returns all occurrences.
 #'
 #' @return A \code{data.frame} with 67 columns.
-#' They are described in \href{https://github.com/voltdatalab/crossfire/blob/master/tables/list_columns.md}{this link},
-#' in English (or \href{https://github.com/voltdatalab/crossfire/blob/master/tables/lista_colunas.md}{in Portuguese}).
 #'
 #' @importFrom magrittr %>%
 #' @importFrom rlang .data

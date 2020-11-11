@@ -20,5 +20,5 @@ Imports:
     jsonlite (>= 1.6),
     rlang (>= 0.3.4),
     magrittr (>= 1.5),
-    lubridate
-RoxygenNote: 6.1.1
+    lubridate (>= 1.7.9)
+RoxygenNote: 7.1.1
