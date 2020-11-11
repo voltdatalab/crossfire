@@ -57,8 +57,8 @@ get_fogocruzado <- function(city = NULL,
                             state = c("PE", "RJ"),
                             security_agent = c(0:1)){
 
-  deprecate_warn("0.2.0", "crossfire::get_fogocruzado(source = )")
-  deprecate_warn("0.2.0", "crossfire::get_fogocruzado(initial_date = 'must be within 210 days from final_date')")
+  lifecycle::deprecate_warn("0.2.0", "crossfire::get_fogocruzado(source = )")
+  lifecycle::deprecate_warn("0.2.0", "crossfire::get_fogocruzado(initial_date = 'must be within 210 days from final_date')")
 
   if(final_date - initial_date >= months(7)){
 
