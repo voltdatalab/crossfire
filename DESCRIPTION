@@ -14,12 +14,13 @@ Description: This package gives a set of functions to extract data from the API 
 License: What license is it under?
 Encoding: UTF-8
 LazyData: true
+Depends:
+    lubridate
 Imports:
     dplyr (>= 0.8.0.1),
     httr (>= 1.4.0),
     jsonlite (>= 1.6),
     rlang (>= 0.3.4),
     magrittr (>= 1.5),
-    lubridate,
     lifecycle
 RoxygenNote: 7.1.1
