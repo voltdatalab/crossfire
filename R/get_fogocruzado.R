@@ -60,14 +60,14 @@ get_fogocruzado <- function(city = NULL,
   lifecycle::deprecate_warn("0.2.0", "crossfire::get_fogocruzado(source = )")
   lifecycle::deprecate_warn("0.2.0", "crossfire::get_fogocruzado(initial_date = 'must be within 210 days from final_date')")
 
-  if(final_date - initial_date >= months(7)){
+  if(as.Date(final_date) - as.Date(initial_date) >= months(7)){
 
     stop("The interval between the initial and final date cannot be longer than 210 days (7 months). Please check your inputs.")
 
   } else
 
   banco <- extract_data_api(paste0("https://api.fogocruzado.org.br/api/v1/occurrences?data_ocorrencia[gt]=",
-                                    as.Date(initial_date), "&data_ocorrencia[lt]=", as.Date(final_date)))
+                                    initial_date, "&data_ocorrencia[lt]=", final_date))
 
   if(!is.data.frame(banco)) {
 
@@ -76,7 +76,7 @@ get_fogocruzado <- function(city = NULL,
     message("Renovating token...")
 
     banco <- extract_data_api(paste0("https://api.fogocruzado.org.br/api/v1/occurrences?data_ocorrencia[gt]=",
-                                     as.Date(initial_date), "&data_ocorrencia[lt]=", as.Date(final_date)))
+                                     initial_date, "&data_ocorrencia[lt]=", final_date))
 
   } else
 
