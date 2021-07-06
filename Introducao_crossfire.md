@@ -4,6 +4,8 @@ O `crossfire` é um pacote criado para facilitar a utilização do banco de dado
 
 O pacote facilita a extração de dados da [API de dados abertos desse repositório](https://api.fogocruzado.org.br/), desenvolvida pelo [Volt Data Lab](https://www.voltdata.info/).
 
+**Aviso: desde novembro de 2020, os usuários devem atualizar o `crossfire` para a sua versão `0.2.0`, devido a mudanças na API do Fogo Cruzado**. A função `get_fogocruzado()` da versão `0.1.0` retorna erros e não é mais utilizável.
+
 ## Instalando e carregando o pacote
 
 No momento, o pacote `crossfire` pode ser instalado diretamente da sua página no github:
