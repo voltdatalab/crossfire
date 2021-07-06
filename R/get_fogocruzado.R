@@ -45,10 +45,10 @@
 #' }
 #'
 #' # returns a data.frame with all occurrences in the city of Belford Roxo
-#' # starting in January 1st, 2017 and finishing in June 30th, 2018.
+#' # starting in January 1st, 2017 and finishing in June 30th, 2017.
 #'
 #' \dontrun{
-#' df <- get_fogocruzado(city = "Belford Roxo", initial_date = "2017-01-01", final_date = "2018-06-31")
+#' df <- get_fogocruzado(city = "Belford Roxo", initial_date = "2017-01-01", final_date = "2017-06-30")
 #' }
 
 get_fogocruzado <- function(city = NULL,
@@ -66,7 +66,7 @@ get_fogocruzado <- function(city = NULL,
 
   } else
 
-  banco <- extract_data_api(paste0("https://api.fogocruzado.org.br/api/v1/occurrences?data_ocorrencia[gt]=",
+  banco <- extract_data_api(link = paste0("https://api.fogocruzado.org.br/api/v1/occurrences?data_ocorrencia[gt]=",
                                     initial_date, "&data_ocorrencia[lt]=", final_date))
 
   if(!is.data.frame(banco)) {
@@ -75,7 +75,7 @@ get_fogocruzado <- function(city = NULL,
 
     message("Renovating token...")
 
-    banco <- extract_data_api(paste0("https://api.fogocruzado.org.br/api/v1/occurrences?data_ocorrencia[gt]=",
+    banco <- extract_data_api(link = paste0("https://api.fogocruzado.org.br/api/v1/occurrences?data_ocorrencia[gt]=",
                                      initial_date, "&data_ocorrencia[lt]=", final_date))
 
   } else
@@ -99,6 +99,5 @@ get_fogocruzado <- function(city = NULL,
 
   return(banco)
 }
-
 
 
