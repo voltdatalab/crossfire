@@ -8,6 +8,8 @@
 
 The package facilitates data extraction from the [project open-data API](https://api.fogocruzado.org.br/), developed by [Volt Data Lab](https://www.voltdata.info/en-lg).
 
+**Please note that as of Nov. 2020, due to changes in Fogo Cruzado's API, user's should update `crossfire` to its' `0.2.0` version**. The `get_fogocruzado()` function from the `0.1.0` version returns errors and cannot be used.
+
 ## Installing and loading the package
 
 Currently, the `crossfire` package can be installed directly from its GitHub repository:
