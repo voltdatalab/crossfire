@@ -1,7 +1,16 @@
 import json
 import os
+import sys
 
 import requests
+
+
+def fogocruzado_key():
+    try:
+        key = os.getenv("FOGO_CRUZADO_API_TOKEN")
+    except not key:
+        raise SystemExit("There's no key available. Please check your sign-in information.\nIf you haven't included an authorized e-mail and password in this R session yet, please do so using the fogocruzado_signin() function")
+    return key
 
 
 def get_token_fogocruzado():
