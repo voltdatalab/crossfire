@@ -12,7 +12,7 @@ FOGO_CRUZADO_PASSWORD=password
 Este projeto usa o python [poetry]() para gestão de dependencias. Para executar os testes:
 
 ```
-poetry run python -m unittest
+poetry run python -m unittest discover -s ./Python/
 ```
 
 ## Contribuindo:
