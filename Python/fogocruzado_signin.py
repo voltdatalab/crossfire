@@ -1,6 +1,6 @@
 import os
 
-from fogocruzado_utils import get_token_fogocruzado
+from Python.fogocruzado_utils import get_token_fogocruzado
 
 
 def fogocruzado_signin(email, password):
