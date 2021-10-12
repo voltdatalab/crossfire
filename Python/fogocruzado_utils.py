@@ -5,6 +5,10 @@ import requests
 
 
 def fogocruzado_key():
+    """
+    # Get Fogo Cruzado's API from user and password informed in fogocruzado_signin()
+    :return: Fogo Cruzado's API key
+    """
     try:
         key = os.getenv("FOGO_CRUZADO_API_TOKEN")
     except not key:
@@ -13,7 +17,9 @@ def fogocruzado_key():
 
 
 def get_token_fogocruzado():
-    """Get token from Fogo Cruzado's API"""
+    """
+    Get token from Fogo Cruzado's API
+    """
     try:
         post_fogocruzado = requests.post(
             "https://api.fogocruzado.org.br/api/v1/auth/login",
@@ -31,6 +37,11 @@ def get_token_fogocruzado():
     os.environ["FOGO_CRUZADO_API_TOKEN"] = accesstoken_fogocruzado
 
 def extract_data_api(link):
+    """
+    Extract data from occurrences in Fogo Cruzado's API
+    :param link:
+    :return:
+    """
     print("\nExtracting data from Fogo Cruzado's API.\n \n...\n")
     headers = {'Authorization': fogocruzado_key()}
     fogocruzado_request = requests.get(
@@ -38,7 +49,16 @@ def extract_data_api(link):
         headers=headers)
 
     fogocruzado_request.encoding = "utf8"
-    # fogocruzado_request_data = fogocruzado_request.text
-    # banco = json.loads(fogocruzado_request_data)
     banco = json.loads(fogocruzado_request.content)
     return banco
+
+def extract_cities_api():
+    print("\nExtracting data from Fogo Cruzado's API.\n \n...\n")
+    headers = {'Authorization': fogocruzado_key()}
+    fogocruzado_cities = requests.get(
+        url="https://api.fogocruzado.org.br/api/v1/cities",
+        headers=headers)
+    fogocruzado_cities.encoding = "utf8"
+    banco = json.loads(fogocruzado_cities.content)
+    return banco
+

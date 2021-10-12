@@ -3,10 +3,9 @@ from unittest import TestCase
 
 from decouple import config
 
-from fogocruzado_signin import fogocruzado_signin
-from fogocruzado_utils import fogocruzado_key
+from Python.fogocruzado_signin import fogocruzado_signin
 
-from Python.fogocruzado_utils import extract_data_api
+from Python.fogocruzado_utils import fogocruzado_key, extract_data_api, extract_cities_api
 
 
 class TestSuccessSignin(TestCase):
@@ -42,4 +41,15 @@ class TestExtractDataAPI(TestCase):
             link='https://api.fogocruzado.org.br/api/v1/occurrences?data_ocorrencia[gt]=2020-01-01&data_ocorrencia[lt]=2020-02-01'
         )
         self.assertIsInstance(self.data, list)
+        self.assertTrue(len(self.data) > 0)
+
+
+class TestExtractCitiesAPI(TestCase):
+    def setUp(self):
+        fogocruzado_signin(config('FOGO_CRUZADO_EMAIL'), config('FOGO_CRUZADO_PASSWORD'))
+
+    def test_extract_data_api(self):
+        self.data = extract_cities_api()
+        self.assertIsInstance(self.data, list)
+        self.assertIsInstance(self.data[0], dict)
         self.assertTrue(len(self.data) > 0)

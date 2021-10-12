@@ -18,6 +18,10 @@ poetry run python -m unittest discover -s ./Python/
 ## Contribuindo:
 Add dependencies:
 
+1. fork and clone the repo;
+2. Create venv `.crossfire`;
+3. Install and start poetry in root folder ;
+
 ```buildoutcfg
 poetry add package
 ```
