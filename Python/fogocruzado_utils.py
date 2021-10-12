@@ -29,3 +29,16 @@ def get_token_fogocruzado():
     access_fogocruzado = json.loads(post_fogocruzado.content).get('access_token')
     accesstoken_fogocruzado = f"Bearer {access_fogocruzado}"
     os.environ["FOGO_CRUZADO_API_TOKEN"] = accesstoken_fogocruzado
+
+def extract_data_api(link):
+    print("\nExtracting data from Fogo Cruzado's API.\n \n...\n")
+    headers = {'Authorization': fogocruzado_key()}
+    fogocruzado_request = requests.get(
+        url=link,
+        headers=headers)
+
+    fogocruzado_request.encoding = "utf8"
+    # fogocruzado_request_data = fogocruzado_request.text
+    # banco = json.loads(fogocruzado_request_data)
+    banco = json.loads(fogocruzado_request.content)
+    return banco
