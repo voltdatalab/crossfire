@@ -1,6 +1,6 @@
 import json
 import os
-
+import warnings
 import requests
 
 
@@ -12,7 +12,7 @@ def fogocruzado_key():
     try:
         key = os.getenv("FOGO_CRUZADO_API_TOKEN")
     except not key:
-        raise SystemExit("There's no key available. Please check your sign-in information.\nIf you haven't included an authorized e-mail and password in this R session yet, please do so using the fogocruzado_signin() function")
+        raise warnings.warn("There's no key available. Please check your sign-in information.\nIf you haven't included an authorized e-mail and password in this R session yet, please do so using the fogocruzado_signin() function")
     return key
 
 
@@ -29,7 +29,7 @@ def get_token_fogocruzado():
         post_fogocruzado.raise_for_status()
 
     except requests.exceptions.HTTPError:
-        raise SystemExit(
+        raise warnings.warn(
             "These credentials do not correspond to Fogo Cruzado's records. \nPlease check your e-mail and password or access https://api.fogocruzado.org.br/register to register.")
 
     access_fogocruzado = json.loads(post_fogocruzado.content).get('access_token')
@@ -61,4 +61,6 @@ def extract_cities_api():
     fogocruzado_cities.encoding = "utf8"
     banco = json.loads(fogocruzado_cities.content)
     return banco
+
+# todo confirm raises menssage?
 
