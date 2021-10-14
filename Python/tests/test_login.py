@@ -1,11 +1,14 @@
 import os
+import warnings
+from datetime import date
 from unittest import TestCase
 
 from decouple import config
+from geopandas import GeoDataFrame
 
 from Python.fogocruzado_signin import fogocruzado_signin
-
 from Python.fogocruzado_utils import fogocruzado_key, extract_data_api, extract_cities_api
+from Python.get_fogocruzado import get_fogocruzado
 
 
 class TestSuccessSignin(TestCase):
@@ -21,16 +24,19 @@ class TestSuccessSignin(TestCase):
         self.assertTrue(os.environ["FOGO_CRUZADO_PASSWORD"])
         self.assertTrue(os.environ["FOGO_CRUZADO_API_TOKEN"])
 
+
 class TestFogoCruzadoKey(TestCase):
     """
     Asserts that with right environmental variables a key is returned from API
     """
+
     def setUp(self):
         fogocruzado_signin(config('FOGO_CRUZADO_EMAIL'), config('FOGO_CRUZADO_PASSWORD'))
         self.key = fogocruzado_key()
 
     def test_environmental_variable_is_not_none(self):
         self.assertIsNotNone(self.key)
+
 
 class TestExtractDataAPI(TestCase):
     def setUp(self):
@@ -53,3 +59,16 @@ class TestExtractCitiesAPI(TestCase):
         self.assertIsInstance(self.data, list)
         self.assertIsInstance(self.data[0], dict)
         self.assertTrue(len(self.data) > 0)
+
+
+class TestGetFogoCruzado(TestCase):
+    def setUp(self):
+        fogocruzado_signin(config('FOGO_CRUZADO_EMAIL'), config('FOGO_CRUZADO_PASSWORD'))
+
+    def test_sucessful_get_fogocruzado(self):
+        self.sucessful_get_fogocruzado = get_fogocruzado()
+        self.assertIsInstance(self.sucessful_get_fogocruzado, GeoDataFrame)
+
+    def test_unsucessful_get_fogocruzado(self):
+        self.sucessful_get_fogocruzado = get_fogocruzado(initial_date=date(2020, 1, 1), final_date=date(2021, 10, 1))
+        self.assertFalse(self.sucessful_get_fogocruzado)
