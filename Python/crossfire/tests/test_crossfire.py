@@ -6,9 +6,9 @@ from unittest import TestCase
 from decouple import config
 from geopandas import GeoDataFrame
 
-from Python.fogocruzado_signin import fogocruzado_signin
-from Python.fogocruzado_utils import fogocruzado_key, extract_data_api, extract_cities_api
-from Python.get_fogocruzado import get_fogocruzado
+from crossfire.fogocruzado_signin import fogocruzado_signin
+from crossfire.fogocruzado_utils import fogocruzado_key, extract_data_api, extract_cities_api
+from crossfire.get_fogocruzado import get_fogocruzado
 
 
 class TestSuccessSignin(TestCase):

@@ -14,9 +14,6 @@ classifiers = [
     "Topic :: Scientific/Engineering :: Visualization",
     "Programming Language :: Python",
 ]
-packages = [
-  {include = "Python"},
-]
 exclude =  ["man/", "R/", "tables/", "crossfire.Rproj", "DESCRIPTION", "env-example", "Introducao_crossfire.md",
     "Introduction_crossfire.md", "NAMESPACE",]
 

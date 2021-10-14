@@ -4,7 +4,7 @@ from dateutil.relativedelta import relativedelta
 from geopandas import GeoDataFrame, points_from_xy
 from pandas import DataFrame, to_numeric
 
-from Python.fogocruzado_utils import extract_data_api, get_token_fogocruzado
+from crossfire.fogocruzado_utils import extract_data_api, get_token_fogocruzado
 
 
 def get_fogocruzado(city=None,
