@@ -12,6 +12,24 @@ def get_fogocruzado(city=None,
                     final_date=date.today(),
                     state=['PE', 'RJ'],
                     security_agent=[0, 1]):
+    """
+    :param city: string
+    :param initial_date: datetime.date
+        Initial searching date
+    :param final_date: date.time
+        final searching date
+    :param state: string, by default ['PE', 'RJ']
+
+    :param security_agent: int, by default [0, 1]
+    :return:
+    gpd.GeoDataFrame
+        crossfire occurrences and metadata
+    :example:
+    >>> from crossfire import crossfire_signin, get_crossfire
+    >>> from datetime import date
+    >>> crossfire_signin(email='user@host.com', password='password')
+    >>> get_crossfire(initial_date=date(2020-1-1), final_date=date(2020-3-1), state='RJ')
+    """
     if (final_date - initial_date).days >= 210:
         print(
             'The interval between the initial and final date cannot be longer than 210 days (7 months). Please check your inputs.')
@@ -25,7 +43,8 @@ def get_fogocruzado(city=None,
             banco,
             geometry=points_from_xy(
                 banco.longitude_ocorrencia,
-                banco.latitude_ocorrencia)
+                banco.latitude_ocorrencia),
+            crs="EPSG:4326"
         )
 
         if type(banco_geo) != 'geopandas.geodataframe.GeoDataFrame':
@@ -40,7 +59,8 @@ def get_fogocruzado(city=None,
                 banco,
                 geometry=points_from_xy(
                     banco.longitude_ocorrencia,
-                    banco.latitude_ocorrencia)
+                    banco.latitude_ocorrencia),
+                crs="EPSG:4326"
             )
 
         else:
