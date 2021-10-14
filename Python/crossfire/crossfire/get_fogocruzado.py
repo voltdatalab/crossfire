@@ -18,9 +18,9 @@ def get_fogocruzado(city=None,
         Initial searching date
     :param final_date: date.time
         final searching date
-    :param state: string, by default ['PE', 'RJ']
+    :param state: list with string, by default ['PE', 'RJ']
 
-    :param security_agent: int, by default [0, 1]
+    :param security_agent: list with int, by default [0, 1]
     :return:
     gpd.GeoDataFrame
         crossfire occurrences and metadata
@@ -47,7 +47,7 @@ def get_fogocruzado(city=None,
             crs="EPSG:4326"
         )
 
-        if type(banco_geo) != 'geopandas.geodataframe.GeoDataFrame':
+        if type(banco_geo) != type(GeoDataFrame()):
             print('Renovating token...')
             get_token_fogocruzado()
             banco = extract_data_api(
