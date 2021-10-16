@@ -1,6 +1,6 @@
 import json
 import os
-
+from pandas import DataFrame
 import requests
 
 
@@ -50,8 +50,8 @@ def extract_data_api(link):
     :param link: string
         Request the API url with search parameters
 
-    :return: json
-        Result from the request API in json format
+    :return: pandas.DataFrame
+        Result from the request API in pandas DataFrame format
     """
 
     print("\nExtracting data from Fogo Cruzado's API.\n \n...\n")
@@ -62,6 +62,7 @@ def extract_data_api(link):
 
     fogocruzado_request.encoding = "utf8"
     banco = json.loads(fogocruzado_request.content)
+    banco = DataFrame(banco)
     return banco
 
 
@@ -69,8 +70,8 @@ def extract_cities_api(): # todo confirmar se e a antiga get_cities e como deve 
     """
     Extract data from cities in Fogo Cruzado's API
 
-    :return: json
-        Result from the request API in json format
+    :return: pandas.DataFrame
+        Result from the request API in pandas DataFrame format
     """
 
     print("\nExtracting data from Fogo Cruzado's API.\n \n...\n")
@@ -80,4 +81,5 @@ def extract_cities_api(): # todo confirmar se e a antiga get_cities e como deve 
         headers=headers)
     fogocruzado_cities.encoding = "utf8"
     banco = json.loads(fogocruzado_cities.content)
+    banco = DataFrame(banco)
     return banco

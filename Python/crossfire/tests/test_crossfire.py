@@ -1,14 +1,15 @@
 import os
-import warnings
 from datetime import date
 from unittest import TestCase
 
-from decouple import config
-from geopandas import GeoDataFrame
-
+import numpy
 from crossfire.fogocruzado_signin import fogocruzado_signin
 from crossfire.fogocruzado_utils import fogocruzado_key, extract_data_api, extract_cities_api
+from crossfire.get_cities import get_cities
 from crossfire.get_fogocruzado import get_fogocruzado
+from decouple import config
+from geopandas import GeoDataFrame
+from pandas import DataFrame
 
 
 class TestSuccessSignin(TestCase):
@@ -18,8 +19,8 @@ class TestSuccessSignin(TestCase):
     def test_fogocruzado_signin_environment_variable(self):
         """
         assert the parameters passed to fogocruzado_signin enables FOGO_CRUZADO varibale
-         in the environment
-         """
+        in the environment
+        """
         self.assertTrue(os.environ["FOGO_CRUZADO_EMAIL"])
         self.assertTrue(os.environ["FOGO_CRUZADO_PASSWORD"])
         self.assertTrue(os.environ["FOGO_CRUZADO_API_TOKEN"])
@@ -46,19 +47,29 @@ class TestExtractDataAPI(TestCase):
         self.data = extract_data_api(
             link='https://api.fogocruzado.org.br/api/v1/occurrences?data_ocorrencia[gt]=2020-01-01&data_ocorrencia[lt]=2020-02-01'
         )
-        self.assertIsInstance(self.data, list)
-        self.assertTrue(len(self.data) > 0)
+        self.assertIsInstance(self.data, DataFrame)
+        self.assertTrue(self.data is not None)
 
 
 class TestExtractCitiesAPI(TestCase):
     def setUp(self):
         fogocruzado_signin(config('FOGO_CRUZADO_EMAIL'), config('FOGO_CRUZADO_PASSWORD'))
 
-    def test_extract_data_api(self):
+    def test_extract_cities_api(self):
         self.data = extract_cities_api()
-        self.assertIsInstance(self.data, list)
-        self.assertIsInstance(self.data[0], dict)
-        self.assertTrue(len(self.data) > 0)
+        self.assertIsInstance(self.data, DataFrame)
+        self.assertTrue(self.data is not None)
+
+
+class TestGetCitiesAPI(TestCase):
+    def setUp(self):
+        fogocruzado_signin(config('FOGO_CRUZADO_EMAIL'), config('FOGO_CRUZADO_PASSWORD'))
+        self.cities = get_cities()
+
+    def test_extract_cities_api(self):
+        self.assertIsInstance(self.cities, DataFrame)
+        self.assertTrue(self.cities is not None)
+        self.assertIsInstance(type(self.cities.DensidadeDemografica[0]), type(numpy.float64))
 
 
 class TestGetFogoCruzado(TestCase):

@@ -38,7 +38,6 @@ def get_fogocruzado(city=None,
         banco = extract_data_api(
             link=f'https://api.fogocruzado.org.br/api/v1/occurrences?data_ocorrencia[gt]={initial_date}&data_ocorrencia[lt]={final_date}'
         )
-        banco = DataFrame(banco)
         banco_geo = GeoDataFrame(
             banco,
             geometry=points_from_xy(
@@ -47,14 +46,12 @@ def get_fogocruzado(city=None,
             crs="EPSG:4326"
         )
 
-        if type(banco_geo) != type(GeoDataFrame()):
+        if type(banco_geo) != GeoDataFrame:
             print('Renovating token...')
             get_token_fogocruzado()
             banco = extract_data_api(
                 link=f'https://api.fogocruzado.org.br/api/v1/occurrences?data_ocorrencia[gt]={initial_date}&data_ocorrencia[lt]={final_date}'
             )
-
-            banco = DataFrame(banco)
             banco_geo = GeoDataFrame(
                 banco,
                 geometry=points_from_xy(
@@ -68,13 +65,10 @@ def get_fogocruzado(city=None,
             # banco$cod_ibge_estado <- as.character(banco$cod_ibge_estado)
             banco.densidade_demo_cidade = to_numeric(banco.densidade_demo_cidade)
 
-        if city is not None:
-            banco_geo = banco_geo[banco_geo.uf_estado.isin(city)]
-            banco_geo = banco_geo[banco_geo.uf_estado.isin(state)]
-            banco_geo = banco_geo[banco_geo.uf_estado.isin(security_agent)]
+        if city is not None: # should be string, not none
+            banco_geo = banco_geo[banco_geo.uf_estado == city]
 
-        else:
-            banco_geo = banco_geo[banco_geo.uf_estado.isin(state)]
-            banco_geo = banco_geo[banco_geo.presen_agen_segur_ocorrencia.isin(security_agent)]
+        banco_geo = banco_geo[banco_geo.uf_estado.isin(state)] # should be list
+        banco_geo = banco_geo[banco_geo.presen_agen_segur_ocorrencia.isin(security_agent)] # should be list
 
         return banco_geo
