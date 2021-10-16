@@ -200,7 +200,7 @@ six = ">=1.5"
 name = "python-decouple"
 version = "3.5"
 description = "Strict separation of settings from code."
-category = "main"
+category = "dev"
 optional = false
 python-versions = "*"
 
@@ -280,7 +280,7 @@ testing = ["coverage (>=5.0.3)", "zope.event", "zope.testing"]
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.9"
-content-hash = "da84bff1e848615b5c48a48931ab20731fd64dc368ebb7ac0cbcdd345b4fa2f4"
+content-hash = "2ea7457927131060e08ecf004498ff133520485422bcd59429de71cac794b8f7"
 
 [metadata.files]
 attrs = [
