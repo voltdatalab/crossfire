@@ -61,14 +61,26 @@ def get_fogocruzado(city=None,
             )
 
         else:
-            # banco.cod_ibge_cidade <- as.character(banco$cod_ibge_cidade)
-            # banco$cod_ibge_estado <- as.character(banco$cod_ibge_estado)
             banco.densidade_demo_cidade = to_numeric(banco.densidade_demo_cidade)
 
-        if city is not None: # should be string, not none
-            banco_geo = banco_geo[banco_geo.uf_estado == city]
+        if isinstance(city, str):
+            city = [city]
 
-        banco_geo = banco_geo[banco_geo.uf_estado.isin(state)] # should be list
-        banco_geo = banco_geo[banco_geo.presen_agen_segur_ocorrencia.isin(security_agent)] # should be list
+        if isinstance(city, list):
+            banco_geo = banco_geo[banco_geo.nome_cidade.isin(city)]
+
+        if isinstance(state, str):
+            state = [state]
+
+        if isinstance(state, list):
+            banco_geo = banco_geo[banco_geo.uf_estado.isin(state)]
+
+        if isinstance(security_agent, int):
+            security_agent = [security_agent]
+
+        if isinstance(security_agent, list):
+            banco_geo = banco_geo[banco_geo.presen_agen_segur_ocorrencia.isin(security_agent)]
+
+        # banco.densidade_demo_cidade = banco.densidade_demo_cidade.astype(str)
 
         return banco_geo

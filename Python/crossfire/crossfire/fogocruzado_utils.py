@@ -66,7 +66,7 @@ def extract_data_api(link):
     return banco
 
 
-def extract_cities_api(): # todo confirmar se e a antiga get_cities e como deve ser o retorno
+def extract_cities_api():
     """
     Extract data from cities in Fogo Cruzado's API
 

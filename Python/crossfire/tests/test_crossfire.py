@@ -83,3 +83,44 @@ class TestGetFogoCruzado(TestCase):
     def test_unsucessful_get_fogocruzado(self):
         self.sucessful_get_fogocruzado = get_fogocruzado(initial_date=date(2020, 1, 1), final_date=date(2021, 10, 1))
         self.assertFalse(self.sucessful_get_fogocruzado)
+
+
+class TestFilterCityFogoCruzado(TestCase):
+    def setUp(self):
+        fogocruzado_signin(config('FOGO_CRUZADO_EMAIL'), config('FOGO_CRUZADO_PASSWORD'))
+
+    def test_sucessful_filter_city_from_string(self):
+        self.sucessful_get_fogocruzado = get_fogocruzado(city="Rio de Janeiro")
+        self.assertTrue(
+            self.sucessful_get_fogocruzado.nome_cidade.unique()[0] == 'Rio de Janeiro'
+        )
+
+    def test_sucessful_filter_city_from_list(self):
+        self.sucessful_get_fogocruzado = get_fogocruzado(city=['Rio de Janeiro', 'Belford Roxo'])
+        self.assertTrue(
+            list(self.sucessful_get_fogocruzado.nome_cidade.unique()) == ['Rio de Janeiro', 'Belford Roxo']
+        )
+
+    def test_sucessful_filter_state_from_string(self):
+        self.sucessful_get_fogocruzado = get_fogocruzado(state="RJ")
+        self.assertTrue(
+            self.sucessful_get_fogocruzado.uf_estado.unique()[0] == 'RJ'
+        )
+
+    def test_sucessful_filter_state_from_list(self):
+        self.sucessful_get_fogocruzado = get_fogocruzado(state=['RJ', 'PE'])
+        self.assertTrue(
+            list(self.sucessful_get_fogocruzado.uf_estado.unique()) == ['RJ', 'PE']
+        )
+
+    def test_sucessful_filter_security_agent_from_string(self):
+        self.sucessful_get_fogocruzado = get_fogocruzado(security_agent=1)
+        self.assertTrue(
+            self.sucessful_get_fogocruzado.presen_agen_segur_ocorrencia.unique()[0] == 1
+        )
+
+    def test_sucessful_filter_security_agent_from_list(self):
+        self.sucessful_get_fogocruzado = get_fogocruzado(security_agent=[0, 1])
+        self.assertTrue(
+            list(self.sucessful_get_fogocruzado.presen_agen_segur_ocorrencia.unique()) == [0, 1]
+        )
