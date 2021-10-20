@@ -1,10 +1,10 @@
 from datetime import date
-
-from dateutil.relativedelta import relativedelta
-from geopandas import GeoDataFrame, points_from_xy
-from pandas import DataFrame, to_numeric
+from warnings import warn
 
 from crossfire.fogocruzado_utils import extract_data_api, get_token_fogocruzado
+from dateutil.relativedelta import relativedelta
+from geopandas import GeoDataFrame, points_from_xy
+from pandas import to_numeric
 
 
 def get_fogocruzado(city=None,
@@ -31,8 +31,10 @@ def get_fogocruzado(city=None,
     >>> get_crossfire(initial_date=date(2020-1-1), final_date=date(2020-3-1), state='RJ')
     """
     if (final_date - initial_date).days >= 210:
-        print(
-            'The interval between the initial and final date cannot be longer than 210 days (7 months). Please check your inputs.')
+        warn(
+            (
+                "The interval between the initial and final date cannot be longer than 210 days (7 months). Please check your inputs."),
+            Warning)
 
     else:
         banco = extract_data_api(
@@ -47,7 +49,9 @@ def get_fogocruzado(city=None,
         )
 
         if type(banco_geo) != GeoDataFrame:
-            print('Renovating token...')
+            warn(
+                ("Renovating token..."),
+                Warning)
             get_token_fogocruzado()
             banco = extract_data_api(
                 link=f'https://api.fogocruzado.org.br/api/v1/occurrences?data_ocorrencia[gt]={initial_date}&data_ocorrencia[lt]={final_date}'

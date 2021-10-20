@@ -1,7 +1,9 @@
 import json
 import os
-from pandas import DataFrame
+from warnings import warn
+
 import requests
+from pandas import DataFrame
 
 
 def fogocruzado_key():
@@ -14,8 +16,11 @@ def fogocruzado_key():
     try:
         key = os.getenv("FOGO_CRUZADO_API_TOKEN")
     except not key:
-        raise print(
-            "There's no key available. Please check your sign-in information.\nIf you haven't included an authorized e-mail and password in this R session yet, please do so using the fogocruzado_signin() function")
+        raise warn(
+            ("There's no key available. Please check your sign-in information."
+             "If you haven't included an authorized e-mail and password in this python session yet,"
+             "please do so using the fogocruzado_signin() function"),
+            Warning)
     return key
 
 
@@ -36,8 +41,10 @@ def get_token_fogocruzado():
         post_fogocruzado.raise_for_status()
 
     except requests.exceptions.HTTPError:
-        raise print(
-            "These credentials do not correspond to Fogo Cruzado's records. \nPlease check your e-mail and password or access https://api.fogocruzado.org.br/register to register.")
+        raise warn(
+            ("These credentials do not correspond to Fogo Cruzado's records."
+             "Please check your e-mail and password or access https://api.fogocruzado.org.br/register to register."),
+            Warning)
 
     access_fogocruzado = json.loads(post_fogocruzado.content).get('access_token')
     accesstoken_fogocruzado = f"Bearer {access_fogocruzado}"
@@ -53,8 +60,10 @@ def extract_data_api(link):
     :return: pandas.DataFrame
         Result from the request API in pandas DataFrame format
     """
-
-    print("\nExtracting data from Fogo Cruzado's API.\n \n...\n")
+    warn(
+        ("Extracting data from Fogo Cruzado's API."
+         "..."),
+        Warning)
     headers = {'Authorization': fogocruzado_key()}
     fogocruzado_request = requests.get(
         url=link,
@@ -74,7 +83,10 @@ def extract_cities_api():
         Result from the request API in pandas DataFrame format
     """
 
-    print("\nExtracting data from Fogo Cruzado's API.\n \n...\n")
+    warn(
+        ("Extracting data from Fogo Cruzado's API."
+         "..."),
+        Warning)
     headers = {'Authorization': fogocruzado_key()}
     fogocruzado_cities = requests.get(
         url="https://api.fogocruzado.org.br/api/v1/cities",
