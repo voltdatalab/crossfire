@@ -14,14 +14,15 @@ def fogocruzado_key():
     """
 
     try:
-        key = os.getenv("FOGO_CRUZADO_API_TOKEN")
-    except not key:
+        key = os.environ["FOGO_CRUZADO_API_TOKEN"]
+    except KeyError:
         raise warn(
             ("There's no key available. Please check your sign-in information."
              "If you haven't included an authorized e-mail and password in this python session yet,"
              "please do so using the fogocruzado_signin() function"),
             Warning)
-    return key
+    else:
+        return key
 
 
 def get_token_fogocruzado():

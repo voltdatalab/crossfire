@@ -12,9 +12,9 @@ def get_cities():
     banco = extract_cities_api()
 
     if type(banco) is not DataFrame:
-        fogocruzado_signin()  # Does it make sense? Shouldn't be get_token_fogocruzado()?
+        # fogocruzado_signin()  # todo Does it make sense? Shouldn't be get_token_fogocruzado()?
         banco = extract_cities_api()
 
     banco.DensidadeDemografica = to_numeric(banco.DensidadeDemografica)
 
-    return (banco)
+    return banco

@@ -58,7 +58,8 @@ fogocruzado_security = get_fogocruzado(security_agent = [1])
 
 ## More information
 
-For more information on how the package works and for a complete list of functions, see the tutorials (in [English](https://github.com/voltdatalab/crossfire/blob/master/Introduction_crossfire.md) and [Portuguese](https://github.com/voltdatalab/crossfire/blob/master/Introducao_crossfire.md)).
+~~For more information on how the package works and for a complete list of functions, see the tutorials (in [English]() and [Portuguese]()).~~
+To be done
 
 ## Python module authors
 
@@ -71,4 +72,4 @@ For more information on how the package works and for a complete list of functio
 
 ## Contributors
 
-[Sérgio Spagnuolo](https://github.com/voltdatalab) and [Denisson Silva](https://github.com/silvadenisson).
+[Sérgio Spagnuolo](https://github.com/voltdatalab), [Denisson Silva](https://github.com/silvadenisson) and [Felipe Sodré Mendes Barros](https://github.com/FelipeSBarros).
