@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "crossfire"
-version = "0.1.1"
+version = "0.2.0.2"
 description = "crossfire: Download spatial data sets from crossfire project"
 authors = ["Felipe Barros <felipe.b4rros@gmail.com>"]
 readme = "README.md"
