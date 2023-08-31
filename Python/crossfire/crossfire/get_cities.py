@@ -17,4 +17,4 @@ def get_cities():
 
     banco.DensidadeDemografica = to_numeric(banco.DensidadeDemografica)
 
-    return banco
+    return banco  # todo seems it is not necessary anymore. This can be discontinued
