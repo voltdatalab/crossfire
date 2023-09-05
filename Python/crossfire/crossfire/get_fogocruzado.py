@@ -7,11 +7,13 @@ from geopandas import GeoDataFrame, points_from_xy
 from pandas import to_numeric
 
 
-def get_fogocruzado(city=None,
-                    initial_date=date.today() - relativedelta(months=6),
-                    final_date=date.today(),
-                    state=['PE', 'RJ'],
-                    security_agent=[0, 1]):
+def get_fogocruzado(
+    city=None,
+    initial_date=date.today() - relativedelta(months=6),
+    final_date=date.today(),
+    state=["PE", "RJ"],
+    security_agent=[0, 1],
+):
     """
     :param city: string
     :param initial_date: datetime.date
@@ -33,35 +35,35 @@ def get_fogocruzado(city=None,
     if (final_date - initial_date).days >= 210:
         warn(
             (
-                "The interval between the initial and final date cannot be longer than 210 days (7 months). Please check your inputs."),
-            Warning)
+                "The interval between the initial and final date cannot be longer than 210 days (7 months). Please check your inputs."
+            ),
+            Warning,
+        )
 
     else:
         banco = extract_data_api(
-            link=f'https://api.fogocruzado.org.br/api/v1/occurrences?data_ocorrencia[gt]={initial_date}&data_ocorrencia[lt]={final_date}'
+            link=f"https://api.fogocruzado.org.br/api/v1/occurrences?data_ocorrencia[gt]={initial_date}&data_ocorrencia[lt]={final_date}"
         )
         banco_geo = GeoDataFrame(
             banco,
             geometry=points_from_xy(
-                banco.longitude_ocorrencia,
-                banco.latitude_ocorrencia),
-            crs="EPSG:4326"
+                banco.longitude_ocorrencia, banco.latitude_ocorrencia
+            ),
+            crs="EPSG:4326",
         )
 
         if type(banco_geo) != GeoDataFrame:
-            warn(
-                ("Renovating token..."),
-                Warning)
+            warn(("Renovating token..."), Warning)
             get_token_fogocruzado()
             banco = extract_data_api(
-                link=f'https://api.fogocruzado.org.br/api/v1/occurrences?data_ocorrencia[gt]={initial_date}&data_ocorrencia[lt]={final_date}'
+                link=f"https://api.fogocruzado.org.br/api/v1/occurrences?data_ocorrencia[gt]={initial_date}&data_ocorrencia[lt]={final_date}"
             )
             banco_geo = GeoDataFrame(
                 banco,
                 geometry=points_from_xy(
-                    banco.longitude_ocorrencia,
-                    banco.latitude_ocorrencia),
-                crs="EPSG:4326"
+                    banco.longitude_ocorrencia, banco.latitude_ocorrencia
+                ),
+                crs="EPSG:4326",
             )
 
         else:
@@ -83,7 +85,9 @@ def get_fogocruzado(city=None,
             security_agent = [security_agent]
 
         if isinstance(security_agent, list):
-            banco_geo = banco_geo[banco_geo.presen_agen_segur_ocorrencia.isin(security_agent)]
+            banco_geo = banco_geo[
+                banco_geo.presen_agen_segur_ocorrencia.isin(security_agent)
+            ]
 
         # banco.densidade_demo_cidade = banco.densidade_demo_cidade.astype(str)
 
