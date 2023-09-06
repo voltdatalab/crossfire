@@ -34,9 +34,7 @@ def get_fogocruzado(
     """
     if (final_date - initial_date).days >= 210:
         warn(
-            (
-                "The interval between the initial and final date cannot be longer than 210 days (7 months). Please check your inputs."
-            ),
+            "The interval between the initial and final date cannot be longer than 210 days (7 months). Please check your inputs.",
             Warning,
         )
 
@@ -53,7 +51,7 @@ def get_fogocruzado(
         )
 
         if type(banco_geo) != GeoDataFrame:
-            warn(("Renovating token..."), Warning)
+            warn("Renovating token...", Warning)
             get_token_fogocruzado()
             banco = extract_data_api(
                 link=f"https://api.fogocruzado.org.br/api/v1/occurrences?data_ocorrencia[gt]={initial_date}&data_ocorrencia[lt]={final_date}"

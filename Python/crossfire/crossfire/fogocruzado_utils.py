@@ -69,7 +69,7 @@ def extract_data_api(link):
     :return: pandas.DataFrame
         Result from the request API in pandas DataFrame format
     """
-    warn(("Extracting data from Fogo Cruzado's API." "..."), Warning)
+    warn(("Extracting data from Fogo Cruzado's API..."), Warning)
     headers = {"Authorization": fogocruzado_key()}
     fogocruzado_request = requests.get(url=link, headers=headers)
 
@@ -87,7 +87,7 @@ def extract_cities_api():
         Result from the request API in pandas DataFrame format
     """
 
-    warn(("Extracting data from Fogo Cruzado's API." "..."), Warning)
+    warn(("Extracting data from Fogo Cruzado's API..."), Warning)
     headers = {"Authorization": fogocruzado_key()}
     fogocruzado_cities = requests.get(
         url="https://api.fogocruzado.org.br/api/v1/cities", headers=headers
