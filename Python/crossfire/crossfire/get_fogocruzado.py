@@ -1,10 +1,21 @@
+import logging
 from datetime import date
-from warnings import warn
 
 from crossfire.fogocruzado_utils import extract_data_api, get_token_fogocruzado
 from dateutil.relativedelta import relativedelta
 from geopandas import GeoDataFrame, points_from_xy
 from pandas import to_numeric
+
+
+class InvalidDateInterval(Exception):
+    def __init__(self, start_date, end_date):
+        delta = end_date - start_date
+        message = (
+            "The interval between the initial and final date cannot be "
+            f"longer than 210 days (7 months). The interval between {start_date} "
+            f"and {end_date} is {delta.days} days. Please check your inputs."
+        )
+        super().__init__(message)
 
 
 def get_fogocruzado(
@@ -37,18 +48,27 @@ def get_fogocruzado(
     ... )
     """
     if (final_date - initial_date).days >= 210:
-        warn(
-            (
-                "The interval between the initial and final date cannot be "
-                "longer than 210 days (7 months). Please check your inputs."
-            ),
-            Warning,
-        )
+        raise InvalidDateInterval(initial_date, final_date)
 
-    else:
+    banco = extract_data_api(
+        link=(
+            "https://api.fogocruzado.org.br/api/v1/occurrences"
+            f"?data_ocorrencia[gt]={initial_date}"
+            f"&data_ocorrencia[lt]={final_date}"
+        )
+    )
+    banco_geo = GeoDataFrame(
+        banco,
+        geometry=points_from_xy(banco.longitude_ocorrencia, banco.latitude_ocorrencia),
+        crs="EPSG:4326",
+    )
+
+    if type(banco_geo) != GeoDataFrame:
+        logging.info("Renovating token...", Warning)
+        get_token_fogocruzado()
         banco = extract_data_api(
             link=(
-                "https://api.fogocruzado.org.br/api/v1/occurrences"
+                f"https://api.fogocruzado.org.br/api/v1/occurrences"
                 f"?data_ocorrencia[gt]={initial_date}"
                 f"&data_ocorrencia[lt]={final_date}"
             )
@@ -61,43 +81,29 @@ def get_fogocruzado(
             crs="EPSG:4326",
         )
 
-        if type(banco_geo) != GeoDataFrame:
-            warn("Renovating token...", Warning)
-            get_token_fogocruzado()
-            banco = extract_data_api(
-                link=f"https://api.fogocruzado.org.br/api/v1/occurrences?data_ocorrencia[gt]={initial_date}&data_ocorrencia[lt]={final_date}"
-            )
-            banco_geo = GeoDataFrame(
-                banco,
-                geometry=points_from_xy(
-                    banco.longitude_ocorrencia, banco.latitude_ocorrencia
-                ),
-                crs="EPSG:4326",
-            )
+    else:
+        banco.densidade_demo_cidade = to_numeric(banco.densidade_demo_cidade)
 
-        else:
-            banco.densidade_demo_cidade = to_numeric(banco.densidade_demo_cidade)
+    if isinstance(city, str):
+        city = [city]
 
-        if isinstance(city, str):
-            city = [city]
+    if isinstance(city, list):
+        banco_geo = banco_geo[banco_geo.nome_cidade.isin(city)]
 
-        if isinstance(city, list):
-            banco_geo = banco_geo[banco_geo.nome_cidade.isin(city)]
+    if isinstance(state, str):
+        state = [state]
 
-        if isinstance(state, str):
-            state = [state]
+    if isinstance(state, list):
+        banco_geo = banco_geo[banco_geo.uf_estado.isin(state)]
 
-        if isinstance(state, list):
-            banco_geo = banco_geo[banco_geo.uf_estado.isin(state)]
+    if isinstance(security_agent, int):
+        security_agent = [security_agent]
 
-        if isinstance(security_agent, int):
-            security_agent = [security_agent]
+    if isinstance(security_agent, list):
+        banco_geo = banco_geo[
+            banco_geo.presen_agen_segur_ocorrencia.isin(security_agent)
+        ]
 
-        if isinstance(security_agent, list):
-            banco_geo = banco_geo[
-                banco_geo.presen_agen_segur_ocorrencia.isin(security_agent)
-            ]
+    # banco.densidade_demo_cidade = banco.densidade_demo_cidade.astype(str)
 
-        # banco.densidade_demo_cidade = banco.densidade_demo_cidade.astype(str)
-
-        return banco_geo
+    return banco_geo

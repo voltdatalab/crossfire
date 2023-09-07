@@ -1,9 +1,31 @@
+import logging
 import json
 import os
-from warnings import warn
 
 import requests
 from pandas import DataFrame
+
+
+class CredentialsNotFoundError(Exception):
+    def __init__(self, key):
+        message = (
+            f"There's no enviornment variable `{key}` available. Please "
+            "check your sign-in information. If you haven't included an "
+            "authorized e-mail and password in this Python session yet, "
+            "please do so using the `fogocruzado_signin()` function"
+        )
+        super().__init__(message)
+
+
+class InvalidCredentialsError(Exception):
+    def __init__(self, http_error):
+        message = (
+            "These credentials do not correspond to Fogo Cruzado's records. "
+            "Please check your e-mail and password or access "
+            "https://api.fogocruzado.org.br/register to register.\n\n"
+            f"Original HTTP error: {http_error}"
+        )
+        super().__init__(message)
 
 
 def fogocruzado_key():
@@ -12,21 +34,10 @@ def fogocruzado_key():
     :return: string
         Fogo Cruzado's API key
     """
-
     try:
-        key = os.environ["FOGO_CRUZADO_API_TOKEN"]
+        return os.environ["FOGO_CRUZADO_API_TOKEN"]
     except KeyError:
-        raise warn(
-            (
-                "There's no key available. Please check your sign-in information."
-                "If you haven't included an authorized e-mail and password in this "
-                "python session yet, please do so using the fogocruzado_signin() "
-                "function"
-            ),
-            Warning,
-        )
-    else:
-        return key
+        raise CredentialsNotFoundError("FOGO_CRUZADO_API_TOKEN")
 
 
 def get_token_fogocruzado():
@@ -46,16 +57,8 @@ def get_token_fogocruzado():
             },
         )
         post_fogocruzado.raise_for_status()
-
-    except requests.exceptions.HTTPError:
-        raise warn(
-            (
-                "These credentials do not correspond to Fogo Cruzado's records."
-                "Please check your e-mail and password or access "
-                "https://api.fogocruzado.org.br/register to register."
-            ),
-            Warning,
-        )
+    except requests.exceptions.HTTPError as error:
+        raise InvalidCredentialsError(error)
 
     access_fogocruzado = json.loads(post_fogocruzado.content).get("access_token")
     accesstoken_fogocruzado = f"Bearer {access_fogocruzado}"
@@ -71,7 +74,7 @@ def extract_data_api(link):
     :return: pandas.DataFrame
         Result from the request API in pandas DataFrame format
     """
-    warn(("Extracting data from Fogo Cruzado's API..."), Warning)
+    logging.info("Extracting data from Fogo Cruzado's API...")
     headers = {"Authorization": fogocruzado_key()}
     fogocruzado_request = requests.get(url=link, headers=headers)
 
@@ -89,7 +92,7 @@ def extract_cities_api():
         Result from the request API in pandas DataFrame format
     """
 
-    warn(("Extracting data from Fogo Cruzado's API..."), Warning)
+    logging.info("Extracting data from Fogo Cruzado's API...")
     headers = {"Authorization": fogocruzado_key()}
     fogocruzado_cities = requests.get(
         url="https://api.fogocruzado.org.br/api/v1/cities", headers=headers
