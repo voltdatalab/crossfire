@@ -30,17 +30,28 @@ def get_fogocruzado(
     >>> from crossfire import crossfire_signin, get_crossfire
     >>> from datetime import date
     >>> crossfire_signin(email='user@host.com', password='password')
-    >>> get_crossfire(initial_date=date(2020-1-1), final_date=date(2020-3-1), state='RJ')
+    >>> get_crossfire(
+    ...     initial_date=date(2020-1-1),
+    ...     final_date=date(2020-3-1),
+    ...     state='RJ'
+    ... )
     """
     if (final_date - initial_date).days >= 210:
         warn(
-            "The interval between the initial and final date cannot be longer than 210 days (7 months). Please check your inputs.",
+            (
+                "The interval between the initial and final date cannot be "
+                "longer than 210 days (7 months). Please check your inputs."
+            ),
             Warning,
         )
 
     else:
         banco = extract_data_api(
-            link=f"https://api.fogocruzado.org.br/api/v1/occurrences?data_ocorrencia[gt]={initial_date}&data_ocorrencia[lt]={final_date}"
+            link=(
+                "https://api.fogocruzado.org.br/api/v1/occurrences"
+                f"?data_ocorrencia[gt]={initial_date}"
+                f"&data_ocorrencia[lt]={final_date}"
+            )
         )
         banco_geo = GeoDataFrame(
             banco,
