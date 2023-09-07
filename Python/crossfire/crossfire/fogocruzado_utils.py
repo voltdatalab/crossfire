@@ -19,8 +19,9 @@ def fogocruzado_key():
         raise warn(
             (
                 "There's no key available. Please check your sign-in information."
-                "If you haven't included an authorized e-mail and password in this python session yet,"
-                "please do so using the fogocruzado_signin() function"
+                "If you haven't included an authorized e-mail and password in this "
+                "python session yet, please do so using the fogocruzado_signin() "
+                "function"
             ),
             Warning,
         )
@@ -50,7 +51,8 @@ def get_token_fogocruzado():
         raise warn(
             (
                 "These credentials do not correspond to Fogo Cruzado's records."
-                "Please check your e-mail and password or access https://api.fogocruzado.org.br/register to register."
+                "Please check your e-mail and password or access "
+                "https://api.fogocruzado.org.br/register to register."
             ),
             Warning,
         )

@@ -85,8 +85,9 @@ To ensure everyone uses same code style, we suggest applying [Black](https://bla
 poetry install --with dev
 ```
 
-### Checking code style
+### Checking code style and lint
 
 ```commandline
 poetry run black . --check
+poeytry run ruff .
 ```
