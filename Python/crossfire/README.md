@@ -83,5 +83,10 @@ To ensure everyone uses same code style, we suggest applying [Black](https://bla
 
 ```commandline
 poetry install --with dev
+```
+
+### Checking code style
+
+```commandline
 poetry run black . --check
 ```
