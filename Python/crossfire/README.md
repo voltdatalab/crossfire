@@ -72,3 +72,21 @@ For more information on how the package works and for exemples on using the modu
 ## Contributors
 
 [Sérgio Spagnuolo](https://github.com/voltdatalab), [Denisson Silva](https://github.com/silvadenisson) and [Felipe Sodré Mendes Barros](https://github.com/FelipeSBarros).
+
+# Contributing
+
+## Code Formatting
+
+To ensure everyone uses same code style, we suggest applying [Black](https://black.readthedocs.io/en/stable/index.html) before sending your code enhancement.
+
+### Installing project's development dependencies:
+
+```commandline
+poetry install --with dev
+```
+
+### Checking code style
+
+```commandline
+poetry run black . --check
+```
