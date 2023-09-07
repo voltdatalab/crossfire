@@ -91,3 +91,9 @@ poetry install --with dev
 poetry run black . --check
 poeytry run ruff .
 ```
+
+### Running tests
+
+```commandline
+poetry run pytest
+```
