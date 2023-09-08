@@ -1,5 +1,5 @@
 from crossfire.fogocruzado_utils import extract_cities_api
-from pandas import DataFrame, to_numeric
+from pandas import to_numeric
 
 
 def get_cities():
@@ -10,12 +10,5 @@ def get_cities():
     :return: pandas.DataFrame
     """
     banco = extract_cities_api()
-
-    if type(banco) is not DataFrame:
-        # fogocruzado_signin()  # todo Does it make sense?
-        # Shouldn't be get_token_fogocruzado()?
-        banco = extract_cities_api()
-
     banco.DensidadeDemografica = to_numeric(banco.DensidadeDemografica)
-
     return banco

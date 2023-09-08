@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 
 from decouple import UndefinedValueError, config
-from requests import post
+from requests import get, post
 
 from crossfire.errors import CrossfireError
 
@@ -60,3 +60,14 @@ class Client:
             data["data"]["accessToken"], data["data"]["expiresIn"]
         )
         return self.cached_token.value
+
+    def get(self, *args, **kwargs):
+        """Wraps requests.get to inject the authorization header."""
+        auth = {"Authorization": self.token}
+
+        if "headers" not in kwargs:
+            kwargs["headers"] = auth
+        else:
+            kwargs["headers"].update(auth)
+
+        return get(*args, **kwargs)

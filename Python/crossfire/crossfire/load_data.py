@@ -1,7 +1,7 @@
 import logging
 from datetime import date
 
-from crossfire.fogocruzado_utils import extract_data_api, get_token_fogocruzado
+from crossfire.fogocruzado_utils import extract_data_api
 from dateutil.relativedelta import relativedelta
 from geopandas import GeoDataFrame, points_from_xy
 from pandas import to_numeric
@@ -65,7 +65,6 @@ def get_fogocruzado(
 
     if type(banco_geo) != GeoDataFrame:
         logging.info("Renovating token...", Warning)
-        get_token_fogocruzado()
         banco = extract_data_api(
             link=(
                 f"https://api.fogocruzado.org.br/api/v1/occurrences"
