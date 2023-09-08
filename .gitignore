@@ -1,3 +1,4 @@
+.crossfire
 .env
 .idea/*
-.crossfire
+__pycache__/
