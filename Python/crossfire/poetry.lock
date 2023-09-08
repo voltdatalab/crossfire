@@ -568,6 +568,36 @@ tomli = {version = ">=1.0.0", markers = "python_version < \"3.11\""}
 testing = ["argcomplete", "attrs (>=19.2.0)", "hypothesis (>=3.56)", "mock", "nose", "pygments (>=2.7.2)", "requests", "setuptools", "xmlschema"]
 
 [[package]]
+name = "pytest-black-ng"
+version = "0.4.1"
+description = "A pytest plugin to enable format checking with black"
+optional = false
+python-versions = ">=3.5"
+files = [
+    {file = "pytest-black-ng-0.4.1.tar.gz", hash = "sha256:20c1d671b2535e5cf6f8fe03d175887a04f549cb2455264bbb81150c941bd701"},
+    {file = "pytest_black_ng-0.4.1-py3-none-any.whl", hash = "sha256:d4ef8945ff410e3cb915e82420a67256aaca4e9b60cc68c7da1cd3cc85c27315"},
+]
+
+[package.dependencies]
+black = ">=22.1.0"
+pytest = ">=7.0.0"
+toml = "*"
+
+[[package]]
+name = "pytest-ruff"
+version = "0.1.1"
+description = "pytest plugin to check ruff requirements."
+optional = false
+python-versions = ">=3.7,<4.0"
+files = [
+    {file = "pytest_ruff-0.1.1-py3-none-any.whl", hash = "sha256:db33c8d32d730d61d372c1ac4615b1036c47a14c781cbc0ae71811c4cadadc47"},
+    {file = "pytest_ruff-0.1.1.tar.gz", hash = "sha256:f599768ff3834d6b1d6d26b25a030a5b1dcc9cf187239bd9621a7f25f7d8fe46"},
+]
+
+[package.dependencies]
+ruff = ">=0.0.242"
+
+[[package]]
 name = "python-dateutil"
 version = "2.8.2"
 description = "Extensions to the standard Python datetime module"
@@ -732,6 +762,17 @@ files = [
 ]
 
 [[package]]
+name = "toml"
+version = "0.10.2"
+description = "Python Library for Tom's Obvious, Minimal Language"
+optional = false
+python-versions = ">=2.6, !=3.0.*, !=3.1.*, !=3.2.*"
+files = [
+    {file = "toml-0.10.2-py2.py3-none-any.whl", hash = "sha256:806143ae5bfb6a3c6e736a764057db0e6a0e05e338b5630894a5f779cabb4f9b"},
+    {file = "toml-0.10.2.tar.gz", hash = "sha256:b3bda1d108d5dd99f4a20d24d9c348e91c4db7ab1b749200bded2f839ccbe68f"},
+]
+
+[[package]]
 name = "tomli"
 version = "2.0.1"
 description = "A lil' TOML parser"
@@ -846,4 +887,4 @@ testing = ["coverage (>=5.0.3)", "zope.event", "zope.testing"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.9"
-content-hash = "9eff334d596e0d29cb2b1379ecfd12be9c96b1efcd7c13f982807569c289594e"
+content-hash = "296ef9a2e5c91aa2d25a24f38ba4d393e9dfe51862a05207a70c3e64efe78ba2"

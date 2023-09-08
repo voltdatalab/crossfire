@@ -77,23 +77,16 @@ For more information on how the package works and for exemples on using the modu
 
 ## Code Formatting
 
-To ensure everyone uses same code style, we suggest applying [Black](https://black.readthedocs.io/en/stable/index.html) before sending your code enhancement.
+To ensure everyone uses same code style, we suggest running [Black](https://black.readthedocs.io/en/stable/index.html), [Ruff](https://beta.ruff.rs/docs/) and tests before sending your code contributions.
 
 ### Installing project's development dependencies:
 
-```commandline
-poetry install --with dev
+```console
+$ poetry install
 ```
 
-### Checking code style and lint
+### Running tests (includes Black and Ruff checks)
 
-```commandline
-poetry run black . --check
-poeytry run ruff .
-```
-
-### Running tests
-
-```commandline
-poetry run pytest
+```console
+$ poetry run pytest
 ```

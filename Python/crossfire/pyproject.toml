@@ -29,9 +29,12 @@ geopandas = "^0.13.2"
 python-decouple = "^3.5"
 
 [tool.poetry.group.dev.dependencies]
-black = "^23.7.0"
-ruff = "^0.0.287"
 pytest = "^7.4.2"
+pytest-black-ng = "^0.4.1"
+pytest-ruff = "^0.1.1"
+
+[tool.pytest.ini_options]
+addopts = "--black --ruff"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
