@@ -7,7 +7,7 @@ from geopandas import GeoDataFrame, points_from_xy
 from pandas import to_numeric
 
 
-class InvalidDateInterval(Exception):
+class InvalidDateIntervalError(Exception):
     def __init__(self, start_date, end_date):
         delta = end_date - start_date
         message = (
@@ -48,7 +48,7 @@ def get_fogocruzado(
     ... )
     """
     if (final_date - initial_date).days >= 210:
-        raise InvalidDateInterval(initial_date, final_date)
+        raise InvalidDateIntervalError(initial_date, final_date)
 
     banco = extract_data_api(
         link=(
