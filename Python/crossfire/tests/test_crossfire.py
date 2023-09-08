@@ -4,14 +4,14 @@ from unittest import TestCase
 from unittest.mock import patch
 
 import numpy
-from crossfire.fogocruzado_signin import fogocruzado_signin
+from crossfire.signin import fogocruzado_signin
 from crossfire.fogocruzado_utils import (
     fogocruzado_key,
     extract_data_api,
     extract_cities_api,
 )
 from crossfire.get_cities import get_cities
-from crossfire.get_fogocruzado import InvalidDateIntervalError, get_fogocruzado
+from crossfire.load_data import InvalidDateIntervalError, get_fogocruzado
 from geopandas import GeoDataFrame
 from pandas import DataFrame
 
@@ -40,7 +40,7 @@ class TestSuccessSignin(TestCase):
         assert the parameters passed to fogocruzado_signin enables FOGO_CRUZADO varibale
         in the environment
         """
-        with patch("crossfire.fogocruzado_signin.get_token_fogocruzado") as mock:
+        with patch("crossfire.signin.get_token_fogocruzado") as mock:
             fogocruzado_signin("FOGO_CRUZADO_EMAIL", "FOGO_CRUZADO_PASSWORD")
             mock.assert_called_once_with()
 
@@ -90,7 +90,7 @@ class TestGetCitiesAPI(TestCase):
 
 class TestGetFogoCruzado(TestCase):
     def test_sucessful_get_fogocruzado(self):
-        with patch("crossfire.get_fogocruzado.extract_data_api") as mock:
+        with patch("crossfire.load_data.extract_data_api") as mock:
             mock.return_value = fake_api_data()
             sucessful_get_fogocruzado = get_fogocruzado()
         self.assertIsInstance(sucessful_get_fogocruzado, GeoDataFrame)
@@ -104,7 +104,7 @@ class TestGetFogoCruzado(TestCase):
 
 class TestFilterCityFogoCruzado(TestCase):
     def test_sucessful_filter_city_from_string(self):
-        with patch("crossfire.get_fogocruzado.extract_data_api") as mock:
+        with patch("crossfire.load_data.extract_data_api") as mock:
             mock.return_value = fake_api_data(
                 fake_api_row(nome_cidade="Rio de Janeiro"),
                 fake_api_row(nome_cidade="Niterói"),
@@ -115,7 +115,7 @@ class TestFilterCityFogoCruzado(TestCase):
             )
 
     def test_sucessful_filter_city_from_list(self):
-        with patch("crossfire.get_fogocruzado.extract_data_api") as mock:
+        with patch("crossfire.load_data.extract_data_api") as mock:
             mock.return_value = fake_api_data(
                 fake_api_row(nome_cidade="Rio de Janeiro"),
                 fake_api_row(nome_cidade="Niterói"),
@@ -130,7 +130,7 @@ class TestFilterCityFogoCruzado(TestCase):
         )
 
     def test_sucessful_filter_state_from_string(self):
-        with patch("crossfire.get_fogocruzado.extract_data_api") as mock:
+        with patch("crossfire.load_data.extract_data_api") as mock:
             mock.return_value = fake_api_data(
                 fake_api_row(uf_estado="RJ"),
                 fake_api_row(uf_estado="PE"),
@@ -139,7 +139,7 @@ class TestFilterCityFogoCruzado(TestCase):
             self.assertEqual(sucessful_get_fogocruzado.uf_estado.unique(), ["RJ"])
 
     def test_sucessful_filter_state_from_list(self):
-        with patch("crossfire.get_fogocruzado.extract_data_api") as mock:
+        with patch("crossfire.load_data.extract_data_api") as mock:
             mock.return_value = fake_api_data(
                 fake_api_row(uf_estado="RJ"),
                 fake_api_row(uf_estado="ES"),
@@ -151,7 +151,7 @@ class TestFilterCityFogoCruzado(TestCase):
             )
 
     def test_sucessful_filter_security_agent_from_string(self):
-        with patch("crossfire.get_fogocruzado.extract_data_api") as mock:
+        with patch("crossfire.load_data.extract_data_api") as mock:
             mock.return_value = fake_api_data(
                 fake_api_row(presen_agen_segur_ocorrencia=1),
                 fake_api_row(presen_agen_segur_ocorrencia=0),
@@ -162,7 +162,7 @@ class TestFilterCityFogoCruzado(TestCase):
             )
 
     def test_sucessful_filter_security_agent_from_list(self):
-        with patch("crossfire.get_fogocruzado.extract_data_api") as mock:
+        with patch("crossfire.load_data.extract_data_api") as mock:
             mock.return_value = fake_api_data(
                 fake_api_row(presen_agen_segur_ocorrencia=2),
                 fake_api_row(presen_agen_segur_ocorrencia=0),
