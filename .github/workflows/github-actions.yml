@@ -14,8 +14,8 @@ jobs:
       - name: Install and configure Poetry
         uses: snok/install-poetry@v1
       - name: Install dependencies
-        run:
-          - cd Python/crossfire
-          - poetry install
+        run: |
+          cd Python/crossfire
+          poetry install
       - name: Run tests
         run: poetry run pytest
