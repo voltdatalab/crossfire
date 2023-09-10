@@ -2,6 +2,9 @@ name: 'Check test, code style and linter'
 'on':
   - push
   - pull_request
+env:
+   FOGOCRUZADO_EMAIL: 'email'
+   FOGOCRUZADO_PASSWORD: 'pass'
 jobs:
   build:
     runs-on: ubuntu-latest
