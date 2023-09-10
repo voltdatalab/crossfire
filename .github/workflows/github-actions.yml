@@ -18,4 +18,4 @@ jobs:
           poetry install -C ./Python/crossfire/
       - name: Run tests
         run: |
-          poetry run pytest
+          poetry run -C ./Python/crossfire/python pytest
