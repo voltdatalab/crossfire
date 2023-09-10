@@ -24,6 +24,7 @@ python-dateutil = "^2.8.2"
 DateTime = "^4.3"
 pandas = "^2.1.0"
 geopandas = "^0.13.2"
+pytest-env = "^1.0.1"
 
 [tool.poetry.dev-dependencies]
 python-decouple = "^3.5"
