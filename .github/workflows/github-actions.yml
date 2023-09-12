@@ -18,4 +18,6 @@ jobs:
           cd Python/crossfire
           poetry install
       - name: Run tests
-        run: poetry run pytest
+        run: |
+          cd Python/crossfire
+          poetry run pytest
