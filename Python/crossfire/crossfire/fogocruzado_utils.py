@@ -1,11 +1,13 @@
 import logging
-
+from functools import lru_cache
 from pandas import DataFrame
 
 from crossfire.client import Client
 
 
-client = Client()
+@lru_cache(maxsize=1)
+def load_client():
+    return Client()
 
 
 def to_dataframe(resp):
@@ -23,6 +25,7 @@ def extract_data_api(link):
         Result from the request API in pandas DataFrame format
     """
     logging.info("Extracting data from Fogo Cruzado's API...")
+    client = load_client()
     resp = client.get(url=link)
     return to_dataframe(resp)
 
@@ -35,5 +38,6 @@ def extract_cities_api():
         Result from the request API in pandas DataFrame format
     """
     logging.info("Extracting data from Fogo Cruzado's API...")
+    client = load_client()
     resp = client.get(url="https://api.fogocruzado.org.br/api/v1/cities")
     return to_dataframe(resp)
