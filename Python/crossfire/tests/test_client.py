@@ -31,6 +31,13 @@ def test_client_does_not_initiate_with_proper_credentials():
             Client()
 
 
+def test_client_initiates_with_credentials_from_kwargs():
+    credentials_kwargs = {"email": "email.kwargs", "password": "password.kwargs"}
+    client = Client(**credentials_kwargs)
+    assert client.email == "email.kwargs"
+    assert client.password == "password.kwargs"
+
+
 def test_client_returns_a_token_when_cached_token_is_valid(client_with_token):
     assert client_with_token.token == "42"
 
