@@ -82,6 +82,9 @@ class Client:
 
         return get(*args, **kwargs)
 
-    def states(self):
+    def states(self, as_dataframe=True):
         resp = self.get(f"{self.URL}states")
-        return to_dataframe(resp)
+        if as_dataframe:
+            return to_dataframe(resp)
+
+        return resp.json().get("data", [])
