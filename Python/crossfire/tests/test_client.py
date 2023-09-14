@@ -6,9 +6,10 @@ from pytest import raises
 
 from crossfire.client import (
     Client,
-    Token,
     CredentialsNotFoundError,
     IncorrectCrdentialsError,
+    Token,
+    UnknownFormatError,
 )
 
 AUTH_LOGIN_DATA = {
@@ -117,12 +118,19 @@ def test_client_load_states(client_with_token):
         assert states.name[0] == "Rio de Janeiro"
 
 
-def test_client_load_states_as_python(client_with_token):
+def test_client_load_states_raises_format_error(client_with_token):
+    with patch("crossfire.client.get") as mock:
+        mock.return_value.json.return_value = {"data": []}
+        with raises(UnknownFormatError):
+            client_with_token.states(format="parquet")
+
+
+def test_client_load_states_as_dictionary(client_with_token):
     with patch("crossfire.client.get") as mock:
         mock.return_value.json.return_value = {
             "data": [{"id": "42", "name": "Rio de Janeiro"}]
         }
-        states = client_with_token.states(as_dataframe=False)
+        states = client_with_token.states(format="dict")
         mock.assert_called_once_with(
             "https://api-service.fogocruzado.org.br/api/v2/states",
             headers={"Authorization": "Bearer 42"},

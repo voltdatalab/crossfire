@@ -1,3 +1,4 @@
+from functools import cached_property
 from datetime import datetime, timedelta
 
 from decouple import UndefinedValueError, config
@@ -5,6 +6,10 @@ from pandas import DataFrame
 from requests import get, post
 
 from crossfire.errors import CrossfireError
+
+
+URL = "https://api-service.fogocruzado.org.br/api/v2"
+FORMATS = {"df", "dict"}
 
 
 class CredentialsNotFoundError(CrossfireError):
@@ -17,10 +22,10 @@ class IncorrectCrdentialsError(CrossfireError):
     pass
 
 
-def to_dataframe(resp):
-    resp.encoding = "utf8"
-    contents = resp.json()
-    return DataFrame(contents.get("data", []))
+class UnknownFormatError(CrossfireError):
+    def __init__(self, format):
+        message = f"Unknown format `{format}`. Valid formats are: {', '.join(FORMATS)}"
+        super().__init__(message)
 
 
 class Token:
@@ -32,9 +37,27 @@ class Token:
         return datetime.now() < self.valid_until
 
 
-class Client:
-    URL = "https://api-service.fogocruzado.org.br/api/v2/"
+def parse_response(method):
+    def wrapper(self, *args, **kwargs):
+        """Converts API response to a dicitonary, Pandas DataFrame or GeoDataFrame."""
+        format = kwargs.pop("format", None)
+        if format and format not in FORMATS:
+            raise UnknownFormatError(format)
 
+        response = method(self, *args, **kwargs)
+        response.encoding = "utf8"
+        contents = response.json()
+        data = contents.get("data", [])
+
+        if self.has_pandas and format in ("df", None):
+            return DataFrame(data)
+
+        return data
+
+    return wrapper
+
+
+class Client:
     def __init__(self, **kwargs):
         self.email = kwargs.get("email")
         self.password = kwargs.get("password")
@@ -51,12 +74,20 @@ class Client:
 
         self.cached_token = None
 
+    @cached_property
+    def has_pandas(self):
+        try:
+            DataFrame
+        except NameError:
+            return False
+        return True
+
     @property
     def token(self):
         if self.cached_token and self.cached_token.is_valid():
             return self.cached_token.value
 
-        url = f"{self.URL}auth/login"
+        url = f"{URL}/auth/login"
         resp = post(url, json={"email": self.email, "password": self.password})
         if resp.status_code == 401:
             data = resp.json()
@@ -71,8 +102,11 @@ class Client:
         )
         return self.cached_token.value
 
+    @parse_response
     def get(self, *args, **kwargs):
-        """Wraps requests.get to inject the authorization header."""
+        """Wraps `requests.get` to inject the authorization header. Also, accepts the
+        `format` argument consumed by the `parse_response` decorator, which removes it
+        before passing the arguments to `requests.get`."""
         auth = {"Authorization": f"Bearer {self.token}"}
 
         if "headers" not in kwargs:
@@ -82,9 +116,5 @@ class Client:
 
         return get(*args, **kwargs)
 
-    def states(self, as_dataframe=True):
-        resp = self.get(f"{self.URL}states")
-        if as_dataframe:
-            return to_dataframe(resp)
-
-        return resp.json().get("data", [])
+    def states(self, format=None):
+        return self.get(f"{URL}/states", format=format)

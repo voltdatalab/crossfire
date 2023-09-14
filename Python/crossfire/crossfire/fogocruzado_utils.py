@@ -1,7 +1,7 @@
 import logging
 from functools import lru_cache
 
-from crossfire.client import Client, to_dataframe
+from crossfire.client import Client
 
 
 @lru_cache(maxsize=1)
@@ -20,8 +20,7 @@ def extract_data_api(link):
     """
     logging.info("Extracting data from Fogo Cruzado's API...")
     client = load_client()
-    resp = client.get(url=link)
-    return to_dataframe(resp)
+    return client.get(link)
 
 
 def extract_cities_api():
@@ -31,7 +30,4 @@ def extract_cities_api():
     :return: pandas.DataFrame
         Result from the request API in pandas DataFrame format
     """
-    logging.info("Extracting data from Fogo Cruzado's API...")
-    client = load_client()
-    resp = client.get(url="https://api.fogocruzado.org.br/api/v1/cities")
-    return to_dataframe(resp)
+    return extract_data_api("https://api.fogocruzado.org.br/api/v1/cities")
