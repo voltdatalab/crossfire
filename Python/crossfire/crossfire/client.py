@@ -1,6 +1,7 @@
 from datetime import datetime, timedelta
 
 from decouple import UndefinedValueError, config
+from pandas import DataFrame
 from requests import get, post
 
 from crossfire.errors import CrossfireError
@@ -14,6 +15,12 @@ class CredentialsNotFoundError(CrossfireError):
 
 class IncorrectCrdentialsError(CrossfireError):
     pass
+
+
+def to_dataframe(resp):
+    resp.encoding = "utf8"
+    contents = resp.json()
+    return DataFrame(contents.get("data", []))
 
 
 class Token:
@@ -66,7 +73,7 @@ class Client:
 
     def get(self, *args, **kwargs):
         """Wraps requests.get to inject the authorization header."""
-        auth = {"Authorization": self.token}
+        auth = {"Authorization": f"Bearer {self.token}"}
 
         if "headers" not in kwargs:
             kwargs["headers"] = auth
@@ -74,3 +81,7 @@ class Client:
             kwargs["headers"].update(auth)
 
         return get(*args, **kwargs)
+
+    def states(self):
+        resp = self.get(f"{self.URL}states")
+        return to_dataframe(resp)

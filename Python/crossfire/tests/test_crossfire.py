@@ -29,8 +29,8 @@ def fake_api_data(*rows):
 
 class TestExtractDataAPI(TestCase):
     def test_extract_data_api(self):
-        with patch("crossfire.fogocruzado_utils.load_client") as mock:
-            mock.return_value.get.return_value.json.return_value = []
+        with patch("crossfire.fogocruzado_utils.to_dataframe") as mock:
+            mock.return_value = DataFrame()
             data = extract_data_api(
                 link="https://api.fogocruzado.org.br/api/v1/occurrences?data_ocorrencia[gt]=2020-01-01&data_ocorrencia[lt]=2020-02-01"
             )
@@ -39,8 +39,8 @@ class TestExtractDataAPI(TestCase):
 
 class TestExtractCitiesAPI(TestCase):
     def test_extract_cities_api(self):
-        with patch("crossfire.fogocruzado_utils.load_client") as mock:
-            mock.return_value.get.return_value.json.return_value = []
+        with patch("crossfire.fogocruzado_utils.to_dataframe") as mock:
+            mock.return_value = DataFrame()
             data = extract_cities_api()
         self.assertIsInstance(data, DataFrame)
 

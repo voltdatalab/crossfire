@@ -1,18 +1,12 @@
 import logging
 from functools import lru_cache
-from pandas import DataFrame
 
-from crossfire.client import Client
+from crossfire.client import Client, to_dataframe
 
 
 @lru_cache(maxsize=1)
 def load_client():
     return Client()
-
-
-def to_dataframe(resp):
-    resp.encoding = "utf8"
-    return DataFrame(resp.json())
 
 
 def extract_data_api(link):

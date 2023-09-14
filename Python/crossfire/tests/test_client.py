@@ -92,12 +92,26 @@ def test_client_goes_back_to_the_api_when_token_is_expired(client):
 def test_client_inserts_auth_header_on_http_get(client_with_token):
     with patch("crossfire.client.get") as mock:
         client_with_token.get("my-url")
-        mock.assert_called_once_with("my-url", headers={"Authorization": "42"})
+        mock.assert_called_once_with("my-url", headers={"Authorization": "Bearer 42"})
 
 
 def test_client_inserts_auth_header_on_http_get_without_overwriting(client_with_token):
     with patch("crossfire.client.get") as mock:
         client_with_token.get("my-url", headers={"answer": "fourty-two"})
         mock.assert_called_once_with(
-            "my-url", headers={"Authorization": "42", "answer": "fourty-two"}
+            "my-url", headers={"Authorization": "Bearer 42", "answer": "fourty-two"}
         )
+
+
+def test_client_load_states(client_with_token):
+    with patch("crossfire.client.get") as mock:
+        mock.return_value.json.return_value = {
+            "data": [{"id": "42", "name": "Rio de Janeiro"}]
+        }
+        states = client_with_token.states()
+        mock.assert_called_once_with(
+            "https://api-service.fogocruzado.org.br/api/v2/states",
+            headers={"Authorization": "Bearer 42"},
+        )
+        assert states.shape == (1, 2)
+        assert states.name[0] == "Rio de Janeiro"
