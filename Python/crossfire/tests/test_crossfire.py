@@ -2,9 +2,7 @@ from datetime import date
 from unittest import TestCase
 from unittest.mock import patch
 
-import numpy
 from crossfire.fogocruzado_utils import extract_data_api, extract_cities_api
-from crossfire.get_cities import get_cities
 
 from crossfire.load_data import InvalidDateIntervalError, get_fogocruzado
 from geopandas import GeoDataFrame
@@ -45,18 +43,6 @@ class TestExtractCitiesAPI(TestCase):
             mock.return_value.get.return_value.json.return_value = []
             data = extract_cities_api()
         self.assertIsInstance(data, DataFrame)
-
-
-class TestGetCitiesAPI(TestCase):
-    def test_extract_cities_api(self):
-        with patch("crossfire.fogocruzado_utils.load_client") as mock:
-            mock.return_value.get.return_value.json.return_value = [
-                {"DensidadeDemografica": 42.0}
-            ]
-            cities = get_cities()
-
-        self.assertIsInstance(cities, DataFrame)
-        self.assertIsInstance(cities.DensidadeDemografica[0], numpy.float64)
 
 
 class TestGetFogoCruzado(TestCase):
