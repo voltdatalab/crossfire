@@ -5,7 +5,7 @@ from unittest.mock import patch
 import numpy
 from crossfire.fogocruzado_utils import extract_data_api, extract_cities_api
 from crossfire.get_cities import get_cities
-from crossfire.client import Client
+
 from crossfire.load_data import InvalidDateIntervalError, get_fogocruzado
 from geopandas import GeoDataFrame
 from pandas import DataFrame
@@ -31,8 +31,8 @@ def fake_api_data(*rows):
 
 class TestExtractDataAPI(TestCase):
     def test_extract_data_api(self):
-        with patch.object(Client, "get") as mock:
-            mock.return_value.content = b"[]"
+        with patch("crossfire.fogocruzado_utils.load_client") as mock:
+            mock.return_value.get.return_value.json.return_value = []
             data = extract_data_api(
                 link="https://api.fogocruzado.org.br/api/v1/occurrences?data_ocorrencia[gt]=2020-01-01&data_ocorrencia[lt]=2020-02-01"
             )
@@ -41,16 +41,18 @@ class TestExtractDataAPI(TestCase):
 
 class TestExtractCitiesAPI(TestCase):
     def test_extract_cities_api(self):
-        with patch.object(Client, "get") as mock:
-            mock.return_value.content = b"[]"
+        with patch("crossfire.fogocruzado_utils.load_client") as mock:
+            mock.return_value.get.return_value.json.return_value = []
             data = extract_cities_api()
         self.assertIsInstance(data, DataFrame)
 
 
 class TestGetCitiesAPI(TestCase):
     def test_extract_cities_api(self):
-        with patch.object(Client, "get") as mock:
-            mock.return_value.json.return_value = [{"DensidadeDemografica": 42.0}]
+        with patch("crossfire.fogocruzado_utils.load_client") as mock:
+            mock.return_value.get.return_value.json.return_value = [
+                {"DensidadeDemografica": 42.0}
+            ]
             cities = get_cities()
 
         self.assertIsInstance(cities, DataFrame)
