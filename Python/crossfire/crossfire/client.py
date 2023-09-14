@@ -28,14 +28,14 @@ class Token:
 class Client:
     URL = "https://api-service.fogocruzado.org.br/api/v2/"
 
-    def __init__(self):
+    def __init__(self, **kwargs):
         try:
-            self.email = config("FOGOCRUZADO_EMAIL")
+            self.email = kwargs.get("email", config("FOGOCRUZADO_EMAIL"))
         except UndefinedValueError:
             raise CredentialsNotFoundError("FOGOCRUZADO_EMAIL")
 
         try:
-            self.password = config("FOGOCRUZADO_PASSWORD")
+            self.password = kwargs.get("password", config("FOGOCRUZADO_PASSWORD"))
         except UndefinedValueError:
             raise CredentialsNotFoundError("FOGOCRUZADO_PASSWORD")
 
