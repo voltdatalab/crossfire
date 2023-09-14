@@ -29,15 +29,18 @@ class Client:
     URL = "https://api-service.fogocruzado.org.br/api/v2/"
 
     def __init__(self, **kwargs):
-        try:
-            self.email = kwargs.get("email", config("FOGOCRUZADO_EMAIL"))
-        except UndefinedValueError:
-            raise CredentialsNotFoundError("FOGOCRUZADO_EMAIL")
-
-        try:
-            self.password = kwargs.get("password", config("FOGOCRUZADO_PASSWORD"))
-        except UndefinedValueError:
-            raise CredentialsNotFoundError("FOGOCRUZADO_PASSWORD")
+        self.email = kwargs.get("email")
+        self.password = kwargs.get("password")
+        if self.email is None:
+            try:
+                self.email = config("FOGOCRUZADO_EMAIL")
+            except UndefinedValueError:
+                raise CredentialsNotFoundError("FOGOCRUZADO_EMAIL")
+        if self.password is None:
+            try:
+                self.password = kwargs.get("password", config("FOGOCRUZADO_PASSWORD"))
+            except UndefinedValueError:
+                raise CredentialsNotFoundError("FOGOCRUZADO_PASSWORD")
 
         self.cached_token = None
 
