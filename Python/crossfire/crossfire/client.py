@@ -1,11 +1,16 @@
-from functools import cached_property
 from datetime import datetime, timedelta
 
 from decouple import UndefinedValueError, config
-from pandas import DataFrame
 from requests import get, post
 
 from crossfire.errors import CrossfireError
+
+try:
+    from pandas import DataFrame
+
+    HAS_PANDAS = True
+except ModuleNotFoundError:
+    HAS_PANDAS = False
 
 
 URL = "https://api-service.fogocruzado.org.br/api/v2"
@@ -49,7 +54,7 @@ def parse_response(method):
         contents = response.json()
         data = contents.get("data", [])
 
-        if self.has_pandas and format in ("df", None):
+        if HAS_PANDAS and format in ("df", None):
             return DataFrame(data)
 
         return data
@@ -73,14 +78,6 @@ class Client:
                 raise CredentialsNotFoundError("FOGOCRUZADO_PASSWORD")
 
         self.cached_token = None
-
-    @cached_property
-    def has_pandas(self):
-        try:
-            DataFrame
-        except NameError:
-            return False
-        return True
 
     @property
     def token(self):
