@@ -115,3 +115,17 @@ class Client:
 
     def states(self, format=None):
         return self.get(f"{URL}/states", format=format)
+
+    def cities(self, **kwargs):
+        city_url = f"{URL}/cities"
+        format = kwargs.pop("format", None)
+        city_id = kwargs.pop("city_id", None)
+        city_name = kwargs.pop("city_name", None)
+        state_id = kwargs.pop("state_id", None)
+        if city_id:
+            city_url = f"{city_url}?cityId={city_id}"
+        elif city_name:
+            city_url = f"{city_url}?cityName={city_name}"
+        elif state_id:
+            city_url = f"{city_url}?stateId={state_id}"
+        return self.get(city_url, format=format)

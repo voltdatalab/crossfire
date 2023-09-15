@@ -137,3 +137,43 @@ def test_client_load_states_as_dictionary(client_with_token):
         )
         assert len(states) == 1
         assert states[0]["name"] == "Rio de Janeiro"
+
+
+def test_client_load_cities(client_with_token):
+    with patch("crossfire.client.get") as mock:
+        mock.return_value.json.return_value = {
+            "data": [
+                {
+                    "id": "21",
+                    "name": "Rio de Janeiro",
+                    "state.id": "42",
+                    "state.name": "Rio de Janeiro",
+                }
+            ]
+        }
+        cities = client_with_token.cities()
+        mock.assert_called_once_with(
+            "https://api-service.fogocruzado.org.br/api/v2/cities",
+            headers={"Authorization": "Bearer 42"},
+        )
+        assert cities.shape == (1, 4)
+        assert cities.name[0] == "Rio de Janeiro"
+
+
+def test_client_load_cities_as_dictionary(client_with_token):
+    with patch("crossfire.client.get") as mock:
+        mock.return_value.json.return_value = {
+            "data": [{
+                    "id": "21",
+                    "name": "Rio de Janeiro",
+                    "state.id": "42",
+                    "state.name": "Rio de Janeiro",
+                }]
+        }
+        cities = client_with_token.cities(format="dict")
+        mock.assert_called_once_with(
+            "https://api-service.fogocruzado.org.br/api/v2/cities",
+            headers={"Authorization": "Bearer 42"},
+        )
+        assert len(cities) == 1
+        assert cities[0]["name"] == "Rio de Janeiro"
