@@ -163,12 +163,14 @@ def test_client_load_cities(client_with_token):
 def test_client_load_cities_as_dictionary(client_with_token):
     with patch("crossfire.client.get") as mock:
         mock.return_value.json.return_value = {
-            "data": [{
+            "data": [
+                {
                     "id": "21",
                     "name": "Rio de Janeiro",
                     "state.id": "42",
                     "state.name": "Rio de Janeiro",
-                }]
+                }
+            ]
         }
         cities = client_with_token.cities(format="dict")
         mock.assert_called_once_with(
