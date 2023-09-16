@@ -44,7 +44,7 @@ class Token:
 
 def parse_response(method):
     def wrapper(self, *args, **kwargs):
-        """Converts API response to a dicitonary, Pandas DataFrame or GeoDataFrame."""
+        """Converts API response to a dictionary, Pandas DataFrame or GeoDataFrame."""
         format = kwargs.pop("format", None)
         if format and format not in FORMATS:
             raise UnknownFormatError(format)
