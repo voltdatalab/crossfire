@@ -1,10 +1,17 @@
 import logging
+from functools import lru_cache
 from datetime import date
 
-from crossfire.fogocruzado_utils import extract_data_api
 from dateutil.relativedelta import relativedelta
 from geopandas import GeoDataFrame, points_from_xy
 from pandas import to_numeric
+
+from crossfire.client import Client
+
+
+@lru_cache(maxsize=1)
+def load_client():
+    return Client()
 
 
 class InvalidDateIntervalError(Exception):
@@ -50,13 +57,13 @@ def get_fogocruzado(
     if (final_date - initial_date).days >= 210:
         raise InvalidDateIntervalError(initial_date, final_date)
 
-    banco = extract_data_api(
-        link=(
-            "https://api.fogocruzado.org.br/api/v1/occurrences"
-            f"?data_ocorrencia[gt]={initial_date}"
-            f"&data_ocorrencia[lt]={final_date}"
-        )
+    client = load_client()
+    banco = client.get(
+        "https://api.fogocruzado.org.br/api/v1/occurrences"
+        f"?data_ocorrencia[gt]={initial_date}"
+        f"&data_ocorrencia[lt]={final_date}"
     )
+
     banco_geo = GeoDataFrame(
         banco,
         geometry=points_from_xy(banco.longitude_ocorrencia, banco.latitude_ocorrencia),
@@ -65,12 +72,10 @@ def get_fogocruzado(
 
     if type(banco_geo) != GeoDataFrame:
         logging.info("Renovating token...", Warning)
-        banco = extract_data_api(
-            link=(
-                f"https://api.fogocruzado.org.br/api/v1/occurrences"
-                f"?data_ocorrencia[gt]={initial_date}"
-                f"&data_ocorrencia[lt]={final_date}"
-            )
+        banco = client.get(
+            f"https://api.fogocruzado.org.br/api/v1/occurrences"
+            f"?data_ocorrencia[gt]={initial_date}"
+            f"&data_ocorrencia[lt]={final_date}"
         )
         banco_geo = GeoDataFrame(
             banco,
