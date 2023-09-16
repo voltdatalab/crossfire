@@ -2,7 +2,6 @@ from functools import lru_cache
 from datetime import date
 
 from dateutil.relativedelta import relativedelta
-from geopandas import GeoDataFrame, points_from_xy
 
 from crossfire.client import Client
 
@@ -55,18 +54,13 @@ def get_fogocruzado(
     if (final_date - initial_date).days >= 210:
         raise InvalidDateIntervalError(initial_date, final_date)
 
-    client = load_client()
-    banco = client.get(
+    url = (
         "https://api.fogocruzado.org.br/api/v1/occurrences"
         f"?data_ocorrencia[gt]={initial_date}"
         f"&data_ocorrencia[lt]={final_date}"
     )
-
-    banco_geo = GeoDataFrame(
-        banco,
-        geometry=points_from_xy(banco.longitude_ocorrencia, banco.latitude_ocorrencia),
-        crs="EPSG:4326",
-    )
+    client = load_client()
+    banco_geo = client.get(url, format="geodf")
 
     if isinstance(city, str):
         city = [city]

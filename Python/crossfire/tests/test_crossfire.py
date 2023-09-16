@@ -2,7 +2,7 @@ from datetime import date
 from unittest import TestCase
 from unittest.mock import patch
 
-from geopandas import GeoDataFrame
+from geopandas import GeoDataFrame, points_from_xy
 from pandas import DataFrame
 
 from crossfire.load_data import InvalidDateIntervalError, get_fogocruzado
@@ -22,14 +22,21 @@ def fake_api_row(**extra_fields):
     return row
 
 
-def fake_api_data(*rows):
-    return DataFrame(rows or [fake_api_row()])
+def fake_api_data(*rows, as_geodf=False):
+    df = DataFrame(rows or [fake_api_row()])
+    if as_geodf:
+        return GeoDataFrame(
+            df,
+            geometry=points_from_xy(df.longitude_ocorrencia, df.latitude_ocorrencia),
+            crs="EPSG:4326",
+        )
+    return df
 
 
 class TestGetFogoCruzado(TestCase):
     def test_sucessful_get_fogocruzado(self):
         with patch("crossfire.load_data.load_client") as mock:
-            mock.return_value.get.return_value = fake_api_data()
+            mock.return_value.get.return_value = fake_api_data(as_geodf=True)
             sucessful_get_fogocruzado = get_fogocruzado()
         self.assertIsInstance(sucessful_get_fogocruzado, GeoDataFrame)
 
