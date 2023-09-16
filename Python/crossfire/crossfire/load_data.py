@@ -1,10 +1,8 @@
-import logging
 from functools import lru_cache
 from datetime import date
 
 from dateutil.relativedelta import relativedelta
 from geopandas import GeoDataFrame, points_from_xy
-from pandas import to_numeric
 
 from crossfire.client import Client
 
@@ -70,24 +68,6 @@ def get_fogocruzado(
         crs="EPSG:4326",
     )
 
-    if type(banco_geo) != GeoDataFrame:
-        logging.info("Renovating token...", Warning)
-        banco = client.get(
-            f"https://api.fogocruzado.org.br/api/v1/occurrences"
-            f"?data_ocorrencia[gt]={initial_date}"
-            f"&data_ocorrencia[lt]={final_date}"
-        )
-        banco_geo = GeoDataFrame(
-            banco,
-            geometry=points_from_xy(
-                banco.longitude_ocorrencia, banco.latitude_ocorrencia
-            ),
-            crs="EPSG:4326",
-        )
-
-    else:
-        banco.densidade_demo_cidade = to_numeric(banco.densidade_demo_cidade)
-
     if isinstance(city, str):
         city = [city]
 
@@ -107,7 +87,5 @@ def get_fogocruzado(
         banco_geo = banco_geo[
             banco_geo.presen_agen_segur_ocorrencia.isin(security_agent)
         ]
-
-    # banco.densidade_demo_cidade = banco.densidade_demo_cidade.astype(str)
 
     return banco_geo
