@@ -9,8 +9,8 @@ from crossfire.client import (
     CredentialsNotFoundError,
     IncorrectCrdentialsError,
     Token,
-    UnknownFormatError,
 )
+from crossfire.parser import UnknownFormatError
 
 AUTH_LOGIN_DATA = {
     "data": {
