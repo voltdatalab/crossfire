@@ -26,6 +26,10 @@ class UnknownFormatError(CrossfireError):
         super().__init__(message)
 
 
+class IncompatibleDataError(CrossfireError):
+    pass
+
+
 def parse_response(method):
     def wrapper(self, *args, **kwargs):
         """Converts API response to a dictionary, Pandas DataFrame or GeoDataFrame."""
@@ -40,10 +44,16 @@ def parse_response(method):
 
         if HAS_GEOPANDAS and format == "geodf":
             df = DataFrame(data)
+            if not {"latitude_ocorrencia", "longitude_ocorrencia"}.issubset(df.columns):
+                raise IncompatibleDataError(
+                    "Missing columns `latitude_ocorrencia` and `longitude_ocorrencia`. "
+                    "They are needed to create a GeoDataFrame."
+                )
+
             geometry = points_from_xy(df.longitude_ocorrencia, df.latitude_ocorrencia)
             return GeoDataFrame(df, geometry=geometry, crs=CRS)
 
-        if HAS_PANDAS and format in ("df", None):
+        if HAS_PANDAS and format == "df":
             return DataFrame(data)
 
         return data
