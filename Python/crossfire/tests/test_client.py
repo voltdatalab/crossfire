@@ -153,8 +153,7 @@ def test_client_load_cities(client_with_token):
         }
         cities = client_with_token.cities()
         mock.assert_called_once_with(
-            "https://api-service.fogocruzado.org.br/api/v2/cities",
-            "",
+            "https://api-service.fogocruzado.org.br/api/v2/cities?",
             headers={"Authorization": "Bearer 42"},
         )
         assert cities.shape == (1, 4)
@@ -177,8 +176,7 @@ def test_client_load_cities_as_dictionary(client_with_token):
         }
         cities = client_with_token.cities(format="dict")
         mock.assert_called_once_with(
-            "https://api-service.fogocruzado.org.br/api/v2/cities",
-            "",
+            "https://api-service.fogocruzado.org.br/api/v2/cities?",
             headers={"Authorization": "Bearer 42"},
         )
         assert len(cities) == 1

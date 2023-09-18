@@ -117,12 +117,6 @@ class Client:
         return self.get(f"{URL}/states", format=format)
 
     def cities(self, uuid=None, name=None, state_uuid=None, format=None):
-        city_url = f"{URL}/cities"
-        filters = {}
-        if uuid:
-            filters.update({"cityId": uuid})
-        if name:
-            filters.update({"cityName": name})
-        if state_uuid:
-            filters.update({"stateId": state_uuid})
-        return self.get(city_url, urlencode(filters), format=format)
+        params = {"cityId": uuid, "cityName": name, "stateId": state_uuid}
+        cleaned = urlencode({key: value for key, value in params.items() if value})
+        return self.get(f"{URL}/cities?{cleaned}", format=format)
