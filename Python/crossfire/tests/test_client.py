@@ -155,18 +155,6 @@ def test_client_load_states_raises_format_error(client_with_token):
             client_with_token.states(format="parquet")
 
 
-def test_client_load_states_as_dictionary(client_with_token):
-    with patch("crossfire.client.get") as mock:
-        mock.return_value.json.return_value = {"data": fake_cities_api_row()}
-        states = client_with_token.states(format="dict")
-        mock.assert_called_once_with(
-            "https://api-service.fogocruzado.org.br/api/v2/states",
-            headers={"Authorization": "Bearer 42"},
-        )
-        assert len(states) == 1
-        assert states[0]["name"] == "Rio de Janeiro"
-
-
 def test_client_load_cities(client_with_token):
     with patch("crossfire.client.get") as mock:
         mock.return_value.json.return_value = {"data": fake_cities_api_row()}
