@@ -1,8 +1,9 @@
 from datetime import datetime, timedelta
+from urllib.parse import urlencode
 
 from decouple import UndefinedValueError, config
 from requests import get, post
-from urllib.parse import urlencode
+
 from crossfire.errors import CrossfireError
 
 try:
@@ -116,7 +117,7 @@ class Client:
     def states(self, format=None):
         return self.get(f"{URL}/states", format=format)
 
-    def cities(self, uuid=None, name=None, state_uuid=None, format=None):
-        params = {"cityId": uuid, "cityName": name, "stateId": state_uuid}
+    def cities(self, city_id=None, city_name=None, state_id=None, format=None):
+        params = {"cityId": city_id, "cityName": city_name, "stateId": state_id}
         cleaned = urlencode({key: value for key, value in params.items() if value})
         return self.get(f"{URL}/cities?{cleaned}", format=format)
