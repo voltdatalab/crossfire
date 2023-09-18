@@ -4,17 +4,7 @@ from decouple import UndefinedValueError, config
 from requests import get, post
 
 from crossfire.errors import CrossfireError
-
-try:
-    from pandas import DataFrame
-
-    HAS_PANDAS = True
-except ModuleNotFoundError:
-    HAS_PANDAS = False
-
-
-URL = "https://api-service.fogocruzado.org.br/api/v2"
-FORMATS = {"df", "dict"}
+from crossfire.parser import parse_response
 
 
 class CredentialsNotFoundError(CrossfireError):
@@ -27,12 +17,6 @@ class IncorrectCrdentialsError(CrossfireError):
     pass
 
 
-class UnknownFormatError(CrossfireError):
-    def __init__(self, format):
-        message = f"Unknown format `{format}`. Valid formats are: {', '.join(FORMATS)}"
-        super().__init__(message)
-
-
 class Token:
     def __init__(self, value, expires_in):
         self.value = value
@@ -42,27 +26,9 @@ class Token:
         return datetime.now() < self.valid_until
 
 
-def parse_response(method):
-    def wrapper(self, *args, **kwargs):
-        """Converts API response to a dictionary, Pandas DataFrame or GeoDataFrame."""
-        format = kwargs.pop("format", None)
-        if format and format not in FORMATS:
-            raise UnknownFormatError(format)
-
-        response = method(self, *args, **kwargs)
-        response.encoding = "utf8"
-        contents = response.json()
-        data = contents.get("data", [])
-
-        if HAS_PANDAS and format in ("df", None):
-            return DataFrame(data)
-
-        return data
-
-    return wrapper
-
-
 class Client:
+    URL = "https://api-service.fogocruzado.org.br/api/v2"
+
     def __init__(self, **kwargs):
         self.email = kwargs.get("email")
         self.password = kwargs.get("password")
@@ -84,7 +50,7 @@ class Client:
         if self.cached_token and self.cached_token.is_valid():
             return self.cached_token.value
 
-        url = f"{URL}/auth/login"
+        url = f"{self.URL}/auth/login"
         resp = post(url, json={"email": self.email, "password": self.password})
         if resp.status_code == 401:
             data = resp.json()
@@ -114,4 +80,4 @@ class Client:
         return get(*args, **kwargs)
 
     def states(self, format=None):
-        return self.get(f"{URL}/states", format=format)
+        return self.get(f"{self.URL}/states", format=format)

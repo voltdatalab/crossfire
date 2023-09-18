@@ -2,10 +2,9 @@ from datetime import date
 from unittest import TestCase
 from unittest.mock import patch
 
-from geopandas import GeoDataFrame
+from geopandas import GeoDataFrame, points_from_xy
 from pandas import DataFrame
 
-from crossfire.fogocruzado_utils import extract_data_api, extract_cities_api
 from crossfire.load_data import InvalidDateIntervalError, get_fogocruzado
 
 
@@ -23,36 +22,21 @@ def fake_api_row(**extra_fields):
     return row
 
 
-def fake_api_data(*rows):
-    return DataFrame(rows or [fake_api_row()])
-
-
-class TestExtractDataAPI(TestCase):
-    def test_extract_data_api(self):
-        with patch("crossfire.fogocruzado_utils.load_client") as mock:
-            mock.return_value.get.return_value = DataFrame()
-            data = extract_data_api(
-                (
-                    "https://api.fogocruzado.org.br/api/v1/occurrences"
-                    "?data_ocorrencia[gt]=2020-01-01"
-                    "&data_ocorrencia[lt]=2020-02-01"
-                )
-            )
-        self.assertIsInstance(data, DataFrame)
-
-
-class TestExtractCitiesAPI(TestCase):
-    def test_extract_cities_api(self):
-        with patch("crossfire.fogocruzado_utils.load_client") as mock:
-            mock.return_value.get.return_value = DataFrame()
-            data = extract_cities_api()
-        self.assertIsInstance(data, DataFrame)
+def fake_api_data(*rows, as_geodf=False):
+    df = DataFrame(rows or [fake_api_row()])
+    if as_geodf:
+        return GeoDataFrame(
+            df,
+            geometry=points_from_xy(df.longitude_ocorrencia, df.latitude_ocorrencia),
+            crs="EPSG:4326",
+        )
+    return df
 
 
 class TestGetFogoCruzado(TestCase):
     def test_sucessful_get_fogocruzado(self):
-        with patch("crossfire.load_data.extract_data_api") as mock:
-            mock.return_value = fake_api_data()
+        with patch("crossfire.load_data.load_client") as mock:
+            mock.return_value.get.return_value = fake_api_data(as_geodf=True)
             sucessful_get_fogocruzado = get_fogocruzado()
         self.assertIsInstance(sucessful_get_fogocruzado, GeoDataFrame)
 
@@ -65,8 +49,8 @@ class TestGetFogoCruzado(TestCase):
 
 class TestFilterCityFogoCruzado(TestCase):
     def test_sucessful_filter_city_from_string(self):
-        with patch("crossfire.load_data.extract_data_api") as mock:
-            mock.return_value = fake_api_data(
+        with patch("crossfire.load_data.load_client") as mock:
+            mock.return_value.get.return_value = fake_api_data(
                 fake_api_row(nome_cidade="Rio de Janeiro"),
                 fake_api_row(nome_cidade="Niterói"),
             )
@@ -76,8 +60,8 @@ class TestFilterCityFogoCruzado(TestCase):
             )
 
     def test_sucessful_filter_city_from_list(self):
-        with patch("crossfire.load_data.extract_data_api") as mock:
-            mock.return_value = fake_api_data(
+        with patch("crossfire.load_data.load_client") as mock:
+            mock.return_value.get.return_value = fake_api_data(
                 fake_api_row(nome_cidade="Rio de Janeiro"),
                 fake_api_row(nome_cidade="Niterói"),
                 fake_api_row(nome_cidade="Belford Roxo"),
@@ -91,8 +75,8 @@ class TestFilterCityFogoCruzado(TestCase):
         )
 
     def test_sucessful_filter_state_from_string(self):
-        with patch("crossfire.load_data.extract_data_api") as mock:
-            mock.return_value = fake_api_data(
+        with patch("crossfire.load_data.load_client") as mock:
+            mock.return_value.get.return_value = fake_api_data(
                 fake_api_row(uf_estado="RJ"),
                 fake_api_row(uf_estado="PE"),
             )
@@ -100,8 +84,8 @@ class TestFilterCityFogoCruzado(TestCase):
             self.assertEqual(sucessful_get_fogocruzado.uf_estado.unique(), ["RJ"])
 
     def test_sucessful_filter_state_from_list(self):
-        with patch("crossfire.load_data.extract_data_api") as mock:
-            mock.return_value = fake_api_data(
+        with patch("crossfire.load_data.load_client") as mock:
+            mock.return_value.get.return_value = fake_api_data(
                 fake_api_row(uf_estado="RJ"),
                 fake_api_row(uf_estado="ES"),
                 fake_api_row(uf_estado="PE"),
@@ -112,8 +96,8 @@ class TestFilterCityFogoCruzado(TestCase):
             )
 
     def test_sucessful_filter_security_agent_from_string(self):
-        with patch("crossfire.load_data.extract_data_api") as mock:
-            mock.return_value = fake_api_data(
+        with patch("crossfire.load_data.load_client") as mock:
+            mock.return_value.get.return_value = fake_api_data(
                 fake_api_row(presen_agen_segur_ocorrencia=1),
                 fake_api_row(presen_agen_segur_ocorrencia=0),
             )
@@ -123,8 +107,8 @@ class TestFilterCityFogoCruzado(TestCase):
             )
 
     def test_sucessful_filter_security_agent_from_list(self):
-        with patch("crossfire.load_data.extract_data_api") as mock:
-            mock.return_value = fake_api_data(
+        with patch("crossfire.load_data.load_client") as mock:
+            mock.return_value.get.return_value = fake_api_data(
                 fake_api_row(presen_agen_segur_ocorrencia=2),
                 fake_api_row(presen_agen_segur_ocorrencia=0),
                 fake_api_row(presen_agen_segur_ocorrencia=1),
