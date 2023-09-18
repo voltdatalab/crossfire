@@ -20,6 +20,22 @@ AUTH_LOGIN_DATA = {
 }
 
 
+def fake_cities_api_row(**extra_fields):
+    row = [
+        {
+            "id": "21",
+            "name": "Rio de Janeiro",
+            "state": {
+                "id": "42",
+                "name": "Estado da Guanabara",
+            },
+        }
+    ]
+    if extra_fields:
+        row[0].update(extra_fields)
+    return row
+
+
 def test_client_initiates_with_proper_credentials(client):
     assert client.email == "email"
     assert client.password == "password"
@@ -127,9 +143,7 @@ def test_client_load_states_raises_format_error(client_with_token):
 
 def test_client_load_states_as_dictionary(client_with_token):
     with patch("crossfire.client.get") as mock:
-        mock.return_value.json.return_value = {
-            "data": [{"id": "42", "name": "Rio de Janeiro"}]
-        }
+        mock.return_value.json.return_value = {"data": fake_cities_api_row()}
         states = client_with_token.states(format="dict")
         mock.assert_called_once_with(
             "https://api-service.fogocruzado.org.br/api/v2/states",
@@ -141,39 +155,19 @@ def test_client_load_states_as_dictionary(client_with_token):
 
 def test_client_load_cities(client_with_token):
     with patch("crossfire.client.get") as mock:
-        mock.return_value.json.return_value = {
-            "data": [
-                {
-                    "id": "21",
-                    "name": "Rio de Janeiro",
-                    "state.id": "42",
-                    "state.name": "Rio de Janeiro",
-                }
-            ]
-        }
+        mock.return_value.json.return_value = {"data": fake_cities_api_row()}
         cities = client_with_token.cities()
         mock.assert_called_once_with(
             "https://api-service.fogocruzado.org.br/api/v2/cities?",
             headers={"Authorization": "Bearer 42"},
         )
-        assert cities.shape == (1, 4)
+        assert cities.shape == (1, 3)
         assert cities.name[0] == "Rio de Janeiro"
 
 
 def test_client_load_cities_as_dictionary(client_with_token):
     with patch("crossfire.client.get") as mock:
-        mock.return_value.json.return_value = {
-            "data": [
-                {
-                    "id": "21",
-                    "name": "Rio de Janeiro",
-                    "state": {
-                        "id": "42",
-                        "name": "Estado da Guanabara",
-                    },
-                }
-            ]
-        }
+        mock.return_value.json.return_value = {"data": fake_cities_api_row()}
         cities = client_with_token.cities(format="dict")
         mock.assert_called_once_with(
             "https://api-service.fogocruzado.org.br/api/v2/cities?",
@@ -182,3 +176,33 @@ def test_client_load_cities_as_dictionary(client_with_token):
         assert len(cities) == 1
         assert cities[0]["name"] == "Rio de Janeiro"
         assert cities[0]["state"]["name"] == "Estado da Guanabara"
+
+
+def test_client_load_cities_with_uuid(client_with_token):
+    with patch("crossfire.client.get") as mock:
+        mock.return_value.json.return_value = {"data": fake_cities_api_row()}
+        client_with_token.cities(uuid="21")
+        mock.assert_called_once_with(
+            "https://api-service.fogocruzado.org.br/api/v2/cities?cityId=21",
+            headers={"Authorization": "Bearer 42"},
+        )
+
+
+def test_client_load_cities_with_name(client_with_token):
+    with patch("crossfire.client.get") as mock:
+        mock.return_value.json.return_value = {"data": fake_cities_api_row()}
+        client_with_token.cities(name="Rio de Janeiro")
+        mock.assert_called_once_with(
+            "https://api-service.fogocruzado.org.br/api/v2/cities?cityName=Rio+de+Janeiro",
+            headers={"Authorization": "Bearer 42"},
+        )
+
+
+def test_client_load_cities_with_state_uuid(client_with_token):
+    with patch("crossfire.client.get") as mock:
+        mock.return_value.json.return_value = {"data": fake_cities_api_row()}
+        client_with_token.cities(state_uuid="42")
+        mock.assert_called_once_with(
+            "https://api-service.fogocruzado.org.br/api/v2/cities?stateId=42",
+            headers={"Authorization": "Bearer 42"},
+        )
