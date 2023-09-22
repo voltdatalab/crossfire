@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta
+from urllib.parse import urlencode
 
 from decouple import UndefinedValueError, config
 from requests import get, post
@@ -81,3 +82,8 @@ class Client:
 
     def states(self, format=None):
         return self.get(f"{self.URL}/states", format=format)
+
+    def cities(self, city_id=None, city_name=None, state_id=None, format=None):
+        params = {"cityId": city_id, "cityName": city_name, "stateId": state_id}
+        cleaned = urlencode({key: value for key, value in params.items() if value})
+        return self.get(f"{self.URL}/cities?{cleaned}", format=format)
