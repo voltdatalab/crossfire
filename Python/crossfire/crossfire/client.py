@@ -87,3 +87,20 @@ class Client:
         params = {"cityId": city_id, "cityName": city_name, "stateId": state_id}
         cleaned = urlencode({key: value for key, value in params.items() if value})
         return self.get(f"{self.URL}/cities?{cleaned}", format=format)
+
+    def occurrences(
+        self,
+        city_id=None,
+        state_id=None,
+        initial_date=None,
+        final_date=None,
+        format=None,
+    ):
+        params = {
+            "idCities": city_id,
+            "idState": state_id,
+            "initialdate": initial_date,
+            "finaldate": final_date,
+        }
+        cleaned = urlencode({key: value for key, value in params.items() if value})
+        return self.get(f"{self.URL}/occurrences?{cleaned}", format=format)
