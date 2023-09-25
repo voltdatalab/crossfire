@@ -1,6 +1,6 @@
-from unittest.mock import Mock, call
+from unittest.mock import Mock
 
-from fogocruzado.occurences import Occurences
+from crossfire.occurrences import Occurrences
 
 
 def dummy_response(last_page=False):
@@ -23,21 +23,21 @@ def dummy_response(last_page=False):
     }
 
 
-def test_occurences_from_at_least_two_pages():
+def test_occurrences_from_at_least_two_pages():
     client = Mock()
     client.get.return_value.json.return_value = dummy_response()
-    generator = Occurences(client)
-    occurences = tuple(occ for count, occ in enumerate(generator, 1) if count <= 3)
+    generator = Occurrences(client)
+    occurrences = tuple(occ for count, occ in enumerate(generator, 1) if count <= 3)
     assert client.get.call_count == 2
-    assert len(occurences) == 3
+    assert len(occurrences) == 3
 
 
-def test_occurences_stops_when_there_are_no_more_pages():
+def test_occurrences_stops_when_there_are_no_more_pages():
     client = Mock()
     client.get.return_value.json.side_effect = (
         dummy_response(False),
         dummy_response(True),
     )
-    occurences = tuple(occurence for occurence in Occurences(client))
+    occurrences = tuple(occurence for occurence in Occurrences(client))
     assert client.get.call_count == 2
-    assert len(occurences) == 4
+    assert len(occurrences) == 4
