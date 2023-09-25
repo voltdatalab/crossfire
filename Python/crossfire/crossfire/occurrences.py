@@ -10,15 +10,14 @@ class Occurrences:
     def __iter__(self):
         return self
 
-    def __next__(self):  # __next__ takes no argument, see https://docs.python.org/3/library/stdtypes.html#iterator.__next__
+    def __next__(self):
         if self.buffer.empty():
             self.load_occurrences()
 
         try:
             occurrence = self.buffer.get_nowait()
         except Empty:
-            occurrence = None
-            raise StopIteration  # as mentioned above
+            raise StopIteration
 
         return occurrence
 
