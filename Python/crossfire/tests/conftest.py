@@ -4,7 +4,6 @@ from pytest import fixture
 
 from crossfire.client import Client, Token
 
-
 DEFAULT_TOKEN_EXPIRES_IN = 3600
 
 

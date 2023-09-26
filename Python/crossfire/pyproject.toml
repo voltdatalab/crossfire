@@ -31,10 +31,14 @@ python-decouple = "^3.5"
 [tool.poetry.group.dev.dependencies]
 pytest = "^7.4.2"
 pytest-black-ng = "^0.4.1"
+pytest-isort = "^3.1.0"
 pytest-ruff = "^0.1.1"
 
 [tool.pytest.ini_options]
-addopts = "--black --ruff"
+addopts = "--black --isort --ruff"
+
+[tool.isort]
+profile = "black"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]

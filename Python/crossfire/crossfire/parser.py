@@ -15,7 +15,6 @@ except ModuleNotFoundError:
 
 from crossfire.errors import CrossfireError
 
-
 FORMATS = {"df", "dict", "geodf"}
 CRS = "EPSG:4326"
 
