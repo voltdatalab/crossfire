@@ -1,5 +1,4 @@
 from queue import Queue, Empty
-import random
 
 
 class Occurrences:
@@ -15,11 +14,19 @@ class Occurrences:
             self.load_occurrences()
 
         try:
-            occurrence = self.buffer.get_nowait()
+            occurrences = self.buffer.get_nowait()
         except Empty:
             raise StopIteration
 
-        return occurrence
+        return occurrences
 
     def load_occurrences(self):
-        return self.buffer.put(random.random())
+        occurrences = self.client.get(
+            "https://api-service.fogocruzado.org.br/api/v2/occurrences?"
+        )
+        if occurrences.get("pageMeta", {}).get("hasNextPage"):
+            return self.client.get(
+                "https://api-service.fogocruzado.org.br/api/v2/occurrences?"
+            )
+
+        return self.buffer.put(occurrences.get("data"))
