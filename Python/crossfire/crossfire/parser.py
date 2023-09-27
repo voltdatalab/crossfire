@@ -39,6 +39,7 @@ def parse_response(method):
         response = method(self, *args, **kwargs)
         response.encoding = "utf8"
         contents = response.json()
+        has_next_page = contents.get("pageMeta", {}).get("hasNextPage", False)
         data = contents.get("data", [])
 
         if HAS_GEOPANDAS and format == "geodf":
@@ -50,11 +51,11 @@ def parse_response(method):
                 )
 
             geometry = points_from_xy(df.longitude_ocorrencia, df.latitude_ocorrencia)
-            return GeoDataFrame(df, geometry=geometry, crs=CRS)
+            return GeoDataFrame(df, geometry=geometry, crs=CRS), has_next_page
 
         if HAS_PANDAS and format == "df":
-            return DataFrame(data)
+            return DataFrame(data), has_next_page
 
-        return data
+        return data, has_next_page
 
     return wrapper
