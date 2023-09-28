@@ -14,19 +14,16 @@ class Occurrences:
             self.load_occurrences()
 
         try:
-            occurrences = self.buffer.get_nowait()
+            occurrence = self.buffer.get_nowait()
         except Empty:
             raise StopIteration
 
-        return occurrences
+        return occurrence
 
     def load_occurrences(self):
-        occurrences = self.client.get(
-            "https://api-service.fogocruzado.org.br/api/v2/occurrences?"
-        )
-        if occurrences.get("pageMeta", {}).get("hasNextPage"):
-            return self.client.get(
-                "https://api-service.fogocruzado.org.br/api/v2/occurrences?"
-            )
+        occurrences, has_next_page = self.client.get(f"{self.client.URL}/occurrences")
+        if has_next_page:
+            return self.client.get(f"{self.client.URL}/occurrences")
 
-        return self.buffer.put(occurrences.get("data"))
+        for occurrence in occurrences:
+            self.buffer.put(occurrence)
