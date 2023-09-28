@@ -125,7 +125,7 @@ def test_client_load_states(client_with_token):
         mock.return_value.json.return_value = {
             "data": [{"id": "42", "name": "Rio de Janeiro"}]
         }
-        states, _ = client_with_token.states()
+        states = client_with_token.states()
         mock.assert_called_once_with(
             "https://api-service.fogocruzado.org.br/api/v2/states",
             headers={"Authorization": "Bearer 42"},
@@ -139,7 +139,7 @@ def test_client_load_states_as_df(client_with_token):
         mock.return_value.json.return_value = {
             "data": [{"id": "42", "name": "Rio de Janeiro"}]
         }
-        states, _ = client_with_token.states(format="df")
+        states = client_with_token.states(format="df")
         mock.assert_called_once_with(
             "https://api-service.fogocruzado.org.br/api/v2/states",
             headers={"Authorization": "Bearer 42"},
@@ -158,7 +158,7 @@ def test_client_load_states_raises_format_error(client_with_token):
 def test_client_load_cities(client_with_token):
     with patch("crossfire.client.get") as mock:
         mock.return_value.json.return_value = {"data": fake_cities_api_row()}
-        cities, _ = client_with_token.cities()
+        cities = client_with_token.cities()
         mock.assert_called_once_with(
             "https://api-service.fogocruzado.org.br/api/v2/cities?",
             headers={"Authorization": "Bearer 42"},
@@ -170,7 +170,7 @@ def test_client_load_cities(client_with_token):
 def test_client_load_cities_as_dictionary(client_with_token):
     with patch("crossfire.client.get") as mock:
         mock.return_value.json.return_value = {"data": fake_cities_api_row()}
-        cities, _ = client_with_token.cities(format="dict")
+        cities = client_with_token.cities(format="dict")
         mock.assert_called_once_with(
             "https://api-service.fogocruzado.org.br/api/v2/cities?",
             headers={"Authorization": "Bearer 42"},
