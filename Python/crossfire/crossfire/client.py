@@ -80,27 +80,18 @@ class Client:
 
         return get(*args, **kwargs)
 
-    def states(self, format=None):
+    def _states(self, format=None):
         return self.get(f"{self.URL}/states", format=format)
 
-    def cities(self, city_id=None, city_name=None, state_id=None, format=None):
+    def states(self, *args, **kwargs):
+        states, _ = self._states(*args, **kwargs)
+        return states
+
+    def _cities(self, city_id=None, city_name=None, state_id=None, format=None):
         params = {"cityId": city_id, "cityName": city_name, "stateId": state_id}
         cleaned = urlencode({key: value for key, value in params.items() if value})
         return self.get(f"{self.URL}/cities?{cleaned}", format=format)
 
-    def occurrences(
-        self,
-        city_id=None,
-        state_id=None,
-        initial_date=None,
-        final_date=None,
-        format=None,
-    ):
-        params = {
-            "idCities": city_id,
-            "idState": state_id,
-            "initialdate": initial_date,
-            "finaldate": final_date,
-        }
-        cleaned = urlencode({key: value for key, value in params.items() if value})
-        return self.get(f"{self.URL}/occurrences?{cleaned}", format=format)
+    def cities(self, *args, **kwargs):
+        cities, _ = self._cities(*args, **kwargs)
+        return cities

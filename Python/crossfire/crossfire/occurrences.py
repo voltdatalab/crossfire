@@ -1,4 +1,4 @@
-from queue import Queue, Empty
+from queue import Empty, Queue
 
 
 class Occurrences:
