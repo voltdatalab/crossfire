@@ -15,7 +15,7 @@ def dummy_response(last_page=False):
             "latitude": "-7.9800434000",
             "longitude": "-35.0553350000",
         },
-    ], last_page
+    ], not last_page
 
 
 def test_occurrences_from_at_least_two_pages():
@@ -29,7 +29,7 @@ def test_occurrences_from_at_least_two_pages():
 
 def test_occurrences_stops_when_there_are_no_more_pages():
     client = Mock()
-    client.get.return_value = (
+    client.get.return_value.side_effect = (
         dummy_response(False),
         dummy_response(True),
     )
