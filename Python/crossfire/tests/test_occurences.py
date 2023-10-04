@@ -36,8 +36,3 @@ def test_occurrences_stops_when_there_are_no_more_pages():
     occurrences = tuple(occurence for occurence in Occurrences(client, id_state="42"))
     assert client.get.call_count == 2
     assert len(occurrences) == 4
-
-
-# TODO conto confirmar url com idState
-# TODO criar testes específicos para cada parametro de Ocurrence
-# TODO dummy_response: client.get.return_value = dummy_response()

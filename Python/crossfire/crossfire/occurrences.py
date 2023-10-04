@@ -5,16 +5,14 @@ from urllib.parse import urlencode
 class Occurrences:
     def __init__(self, client, id_state, id_cities=None, format=None):
         self.client = client
-        self.id_state = id_state
-        self.id_cities = id_cities
         self.format = format
 
         self.buffer = Queue()
         self.next_page = 1
 
         self.params = {
-            "idState": self.id_state,
-            "idCities": self.id_cities,
+            "idState": id_state,
+            "idCities": id_cities,
         }
 
     def __iter__(self):
@@ -37,7 +35,7 @@ class Occurrences:
         if not self.next_page:
             return
 
-        self.params.update({"page": self.next_page})
+        self.params["page"] = self.next_page
         cleaned_params = urlencode(
             {key: value for key, value in self.params.items() if value}
         )
