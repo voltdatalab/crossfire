@@ -11,8 +11,9 @@ class Occurrences:
         self.next_page = 1
 
         self.params = {
-            "idState": id_state,
-            "idCities": id_cities,
+            key: value
+            for key, value in {"idState": id_state, "idCities": id_cities}.items()
+            if value
         }
 
     def __iter__(self):
@@ -36,11 +37,8 @@ class Occurrences:
             return
 
         self.params["page"] = self.next_page
-        cleaned_params = urlencode(
-            {key: value for key, value in self.params.items() if value}
-        )
         occurrences, has_next_page = self.client.get(
-            f"{self.client.URL}/occurrences?{cleaned_params}"
+            f"{self.client.URL}/occurrences?{urlencode(self.params)}"
         )
 
         for occurrence in occurrences:
