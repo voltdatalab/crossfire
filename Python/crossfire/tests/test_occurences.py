@@ -22,14 +22,21 @@ def test_occurrences_from_at_least_two_pages():
     client = Mock()
     client.get.return_value = dummy_response()
     generator = Occurrences(client, id_state="42")
-    occurrences = tuple(occ for count, occ in enumerate(generator, 1) if count <= 3)
+    lista = []
+    for count, occ in enumerate(generator, 1):
+        if count <= 3:
+            lista.append(occ)
+        else:
+            break
+    occurrences = tuple(lista)
+
     assert client.get.call_count == 2
     assert len(occurrences) == 3
 
 
 def test_occurrences_stops_when_there_are_no_more_pages():
     client = Mock()
-    client.get.return_value.side_effect = (
+    client.get.side_effect = (
         dummy_response(False),
         dummy_response(True),
     )
