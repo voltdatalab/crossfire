@@ -12,11 +12,9 @@ class Occurrences:
         self.next_page = 1
         self.yielded = 0
 
-        self.params = {
-            key: value
-            for key, value in {"idState": id_state, "idCities": id_cities}.items()
-            if value
-        }
+        self.params = {"idState": id_state}
+        if id_cities:
+            self.params["idCities"] = id_cities
 
     def __iter__(self):
         return self
