@@ -21,14 +21,7 @@ def dummy_response(last_page=False):
 def test_occurrences_from_at_least_two_pages():
     client = Mock()
     client.get.return_value = dummy_response()
-    generator = Occurrences(client, id_state="42")
-    lista = []
-    for count, occ in enumerate(generator, 1):
-        if count <= 3:
-            lista.append(occ)
-        else:
-            break
-    occurrences = tuple(lista)
+    occurrences = tuple(Occurrences(client, id_state="42", limit=3))
 
     assert client.get.call_count == 2
     assert len(occurrences) == 3
@@ -45,19 +38,26 @@ def test_occurrences_stops_when_there_are_no_more_pages():
     assert len(occurrences) == 4
 
 
+def test_occurances_with_limit():
+    client = Mock()
+    client.get.return_value = dummy_response()
+    occurences = tuple(Occurrences(client, id_state="42", limit=42))
+    assert len(occurences) == 42
+
+
 def test_occurrences_with_obligtory_parameters():
     client = Mock()
-    client.get.return_value = dummy_response(True)
-    client.URL = "https://api-service.fogocruzado.org.br/api/v2/"
-    tuple(occurence for occurence in Occurrences(client, id_state="42"))
+    client.get.return_value = dummy_response()
+    client.URL = "https://127.0.0.1/"
+    tuple(Occurrences(client, id_state="42", limit=1))
     client.get.assert_called_once_with(f"{client.URL}/occurrences?idState=42&page=1")
 
 
 def test_occurrences_with_obligtory_and_id_cities_parameters():
     client = Mock()
-    client.get.return_value = dummy_response(True)
-    client.URL = "https://api-service.fogocruzado.org.br/api/v2/"
-    tuple(occurence for occurence in Occurrences(client, id_state="42", id_cities="21"))
+    client.get.return_value = dummy_response()
+    client.URL = "https://127.0.0.1/"
+    tuple(Occurrences(client, id_state="42", id_cities="21", limit=2))
     client.get.assert_called_once_with(
         f"{client.URL}/occurrences?idState=42&idCities=21&page=1"
     )

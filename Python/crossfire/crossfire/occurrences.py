@@ -3,26 +3,26 @@ from urllib.parse import urlencode
 
 
 class Occurrences:
-    def __init__(self, client, id_state, id_cities=None, format=None):
+    def __init__(self, client, id_state, id_cities=None, limit=None, format=None):
         self.client = client
         self.format = format
+        self.limit = limit
 
         self.buffer = Queue()
         self.next_page = 1
+        self.yielded = 0
 
-        self.params = [("idState", id_state)]
-        if id_cities is not None:
-            if isinstance(id_cities, list):
-                id_cities = [("idCities", city) for city in id_cities]
-            else:
-                id_cities = [("idCities", id_cities)]
-            self.params.extend(id_cities)
-        self.urlbase = f"{self.client.URL}/occurrences?{urlencode(self.params)}"
+        self.params = {"idState": id_state}
+        if id_cities:
+            self.params["idCities"] = id_cities
 
     def __iter__(self):
         return self
 
     def __next__(self):
+        if self.limit and self.yielded >= self.limit:
+            raise StopIteration
+
         if self.buffer.empty():
             if not self.next_page:
                 raise StopIteration
@@ -33,6 +33,7 @@ class Occurrences:
         except Empty:
             raise StopIteration
 
+        self.yielded += 1
         return occurrence
 
     def load_occurrences(self):
