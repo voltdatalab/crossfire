@@ -12,9 +12,13 @@ class Occurrences:
         self.next_page = 1
         self.yielded = 0
 
-        self.params = {"idState": id_state}
+        self.params = [("idState", id_state)]
         if id_cities:
-            self.params["idCities"] = id_cities
+            if isinstance(id_cities, list):
+                id_cities = [("idCities", city) for city in id_cities]
+            else:
+                id_cities = [("idCities", id_cities)]
+            self.params.extend(id_cities)
 
     def __iter__(self):
         return self
@@ -36,12 +40,16 @@ class Occurrences:
         self.yielded += 1
         return occurrence
 
+    @property
+    def url(self):
+        return f"{self.client.URL}/occurrences?{urlencode(self.params)}"
+
     def load_occurrences(self):
         if not self.next_page:
             return
 
         occurrences, has_next_page = self.client.get(
-            f"{self.urlbase}&{urlencode({'page': self.next_page})}"
+            # f"{self.urlbase}&{urlencode({'page': self.next_page})}"
         )
 
         for occurrence in occurrences:
