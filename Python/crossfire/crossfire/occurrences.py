@@ -10,11 +10,14 @@ class Occurrences:
         self.buffer = Queue()
         self.next_page = 1
 
-        self.params = {
-            key: value
-            for key, value in {"idState": id_state, "idCities": id_cities}.items()
-            if value
-        }
+        self.params = [("idState", id_state)]
+        if id_cities is not None:
+            if isinstance(id_cities, list):
+                id_cities = [("idCities", city) for city in id_cities]
+            else:
+                id_cities = [("idCities", id_cities)]
+            self.params.extend(id_cities)
+        self.urlbase = f"{self.client.URL}/occurrences?{urlencode(self.params)}"
 
     def __iter__(self):
         return self
@@ -36,9 +39,8 @@ class Occurrences:
         if not self.next_page:
             return
 
-        self.params["page"] = self.next_page
         occurrences, has_next_page = self.client.get(
-            f"{self.client.URL}/occurrences?{urlencode(self.params)}"
+            f"{self.urlbase}&{urlencode({'page': self.next_page})}"
         )
 
         for occurrence in occurrences:

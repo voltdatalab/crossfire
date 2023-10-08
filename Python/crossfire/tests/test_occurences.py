@@ -61,3 +61,16 @@ def test_occurrences_with_obligtory_and_id_cities_parameters():
     client.get.assert_called_once_with(
         f"{client.URL}/occurrences?idState=42&idCities=21&page=1"
     )
+
+
+def test_occurrences_with_obligtory_and_two_id_cities_parameters():
+    client = Mock()
+    client.get.return_value = dummy_response(True)
+    client.URL = "https://api-service.fogocruzado.org.br/api/v2/"
+    tuple(
+        occurence
+        for occurence in Occurrences(client, id_state="42", id_cities=["21", "11"])
+    )
+    client.get.assert_called_once_with(
+        f"{client.URL}/occurrences?idState=42&idCities=21&idCities=11&page=1"
+    )
