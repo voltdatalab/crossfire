@@ -1,6 +1,7 @@
 from unittest.mock import Mock
 
 from crossfire.occurrences import Occurrences
+from crossfire.parser import Metadata
 
 
 def dummy_response(last_page=False):
@@ -15,7 +16,7 @@ def dummy_response(last_page=False):
             "latitude": "-7.9800434000",
             "longitude": "-35.0553350000",
         },
-    ], not last_page
+    ], Metadata.from_response({"pageMeta": {"hasNextPage": not last_page}})
 
 
 def test_occurrences_from_at_least_two_pages():

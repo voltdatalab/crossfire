@@ -39,14 +39,14 @@ def test_parse_response_uses_dict_by_default():
     assert isinstance(data, list)
 
 
-def test_parse_response_handles_has_next_page():
+def test_parse_response_handles_metadata():
     paginated = DummyClient(has_next_page=True)
-    _, has_next_page = paginated.get()
-    assert has_next_page
+    _, metadata = paginated.get()
+    assert metadata.has_next_page
 
     not_paginated = DummyClient()
-    _, has_next_page = not_paginated.get()
-    assert not has_next_page
+    _, metadata = not_paginated.get()
+    assert not metadata.has_next_page
 
 
 def test_parse_response_uses_dataframe_when_specified():
