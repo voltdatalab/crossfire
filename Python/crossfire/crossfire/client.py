@@ -29,21 +29,20 @@ class Token:
 
 class Client:
     URL = "https://api-service.fogocruzado.org.br/api/v2"
+    MAX_PARALLEL_REQUESTS = 32
 
-    def __init__(self, **kwargs):
-        self.email = kwargs.get("email")
-        self.password = kwargs.get("password")
-        if self.email is None:
-            try:
-                self.email = config("FOGOCRUZADO_EMAIL")
-            except UndefinedValueError:
-                raise CredentialsNotFoundError("FOGOCRUZADO_EMAIL")
-        if self.password is None:
-            try:
-                self.password = kwargs.get("password", config("FOGOCRUZADO_PASSWORD"))
-            except UndefinedValueError:
-                raise CredentialsNotFoundError("FOGOCRUZADO_PASSWORD")
+    def __init__(self, email=None, password=None, max_parallel_requests=None):
+        try:
+            self.email = email or config("FOGOCRUZADO_EMAIL")
+        except UndefinedValueError:
+            raise CredentialsNotFoundError("FOGOCRUZADO_EMAIL")
 
+        try:
+            self.password = password or config("FOGOCRUZADO_PASSWORD")
+        except UndefinedValueError:
+            raise CredentialsNotFoundError("FOGOCRUZADO_PASSWORD")
+
+        self.max_parallel_requests = max_parallel_requests or self.MAX_PARALLEL_REQUESTS
         self.cached_token = None
 
     @property
