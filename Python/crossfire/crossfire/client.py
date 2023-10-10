@@ -2,7 +2,7 @@ from datetime import datetime, timedelta
 from urllib.parse import urlencode
 
 from decouple import UndefinedValueError, config
-from requests import get, post
+from httpx import get, post
 
 from crossfire.errors import CrossfireError
 from crossfire.parser import parse_response
@@ -67,9 +67,9 @@ class Client:
 
     @parse_response
     def get(self, *args, **kwargs):
-        """Wraps `requests.get` to inject the authorization header. Also, accepts the
+        """Wraps `httpx.get` to inject the authorization header. Also, accepts the
         `format` argument consumed by the `parse_response` decorator, which removes it
-        before passing the arguments to `requests.get`."""
+        before passing the arguments to `httpx.get`."""
         auth = {"Authorization": f"Bearer {self.token}"}
 
         if "headers" not in kwargs:
