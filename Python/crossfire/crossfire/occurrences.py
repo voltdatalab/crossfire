@@ -41,14 +41,14 @@ class Occurrences:
             return
 
         self.params["page"] = self.next_page
-        occurrences, has_next_page = self.client.get(
+        occurrences, metadata = self.client.get(
             f"{self.client.URL}/occurrences?{urlencode(self.params)}"
         )
 
         for occurrence in occurrences:
             self.buffer.put(occurrence)
 
-        if has_next_page:
+        if metadata.has_next_page:
             self.next_page += 1
         else:
             self.next_page = None
