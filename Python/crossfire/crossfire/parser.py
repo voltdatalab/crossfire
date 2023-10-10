@@ -59,14 +59,13 @@ class Metadata:
 
 
 def parse_response(method):
-    def wrapper(self, *args, **kwargs):
+    async def wrapper(self, *args, **kwargs):
         """Converts API response to a dictionary, Pandas DataFrame or GeoDataFrame."""
         format = kwargs.pop("format", None)
         if format and format not in FORMATS:
             raise UnknownFormatError(format)
 
-        response = method(self, *args, **kwargs)
-        response.encoding = "utf8"
+        response = await method(self, *args, **kwargs)
         contents = response.json()
         metadata = Metadata.from_response(contents)
         data = contents.get("data", [])

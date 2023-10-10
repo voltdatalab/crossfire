@@ -1,4 +1,4 @@
-from unittest.mock import Mock
+from unittest.mock import AsyncMock, Mock
 
 from crossfire.occurrences import Occurrences
 from crossfire.parser import Metadata
@@ -21,15 +21,16 @@ def dummy_response(last_page=False):
 
 def test_occurrences_from_at_least_two_pages():
     client = Mock()
+    client.get = AsyncMock()
     client.get.return_value = dummy_response()
     occurrences = tuple(Occurrences(client, id_state="42", limit=3))
-
     assert client.get.call_count == 2
     assert len(occurrences) == 3
 
 
 def test_occurrences_stops_when_there_are_no_more_pages():
     client = Mock()
+    client.get = AsyncMock()
     client.get.side_effect = (
         dummy_response(False),
         dummy_response(True),
@@ -41,21 +42,24 @@ def test_occurrences_stops_when_there_are_no_more_pages():
 
 def test_occurances_with_limit():
     client = Mock()
+    client.get = AsyncMock()
     client.get.return_value = dummy_response()
     occurences = tuple(Occurrences(client, id_state="42", limit=42))
     assert len(occurences) == 42
 
 
-def test_occurrences_with_obligtory_parameters():
+def test_occurrences_with_mandatory_parameters():
     client = Mock()
+    client.get = AsyncMock()
     client.get.return_value = dummy_response()
     client.URL = "https://127.0.0.1/"
     tuple(Occurrences(client, id_state="42", limit=1))
     client.get.assert_called_once_with(f"{client.URL}/occurrences?idState=42&page=1")
 
 
-def test_occurrences_with_obligtory_and_id_cities_parameters():
+def test_occurrences_with_mandatory_and_id_cities_parameters():
     client = Mock()
+    client.get = AsyncMock()
     client.get.return_value = dummy_response()
     client.URL = "https://127.0.0.1/"
     tuple(Occurrences(client, id_state="42", id_cities="21", limit=1))
@@ -64,8 +68,9 @@ def test_occurrences_with_obligtory_and_id_cities_parameters():
     )
 
 
-def test_occurrences_with_obligtory_and_two_id_cities_parameters():
+def test_occurrences_with_mandatory_and_two_id_cities_parameters():
     client = Mock()
+    client.get = AsyncMock()
     client.get.return_value = dummy_response(True)
     client.URL = "https://127.0.0.1/"
     tuple(Occurrences(client, id_state="42", id_cities=["21", "11"], limit=1))

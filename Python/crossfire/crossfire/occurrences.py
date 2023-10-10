@@ -1,3 +1,4 @@
+from asyncio import run
 from queue import Empty, Queue
 from urllib.parse import urlencode
 
@@ -26,7 +27,7 @@ class Occurrences:
         if self.buffer.empty():
             if not self.next_page:
                 raise StopIteration
-            self.load_occurrences()
+            run(self.load_occurrences())
 
         try:
             occurrence = self.buffer.get_nowait()
@@ -41,12 +42,12 @@ class Occurrences:
         params = urlencode(self.params, doseq=True)
         return f"{self.client.URL}/occurrences?{params}"
 
-    def load_occurrences(self):
+    async def load_occurrences(self):
         if not self.next_page:
             return
 
         self.params["page"] = self.next_page
-        occurrences, metadata = self.client.get(self.url)
+        occurrences, metadata = await self.client.get(self.url)
 
         for occurrence in occurrences:
             self.buffer.put(occurrence)
