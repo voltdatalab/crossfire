@@ -20,8 +20,6 @@ exclude =  ["man/", "R/", "tables/", "crossfire.Rproj", "DESCRIPTION", "env-exam
 [tool.poetry.dependencies]
 python = "^3.9"
 requests = "^2.26.0"
-python-dateutil = "^2.8.2"
-DateTime = "^4.3"
 pandas = "^2.1.0"
 geopandas = "^0.13.2"
 
