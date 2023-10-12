@@ -45,39 +45,34 @@ def test_occurances_with_limit():
     assert len(occurences) == 42
 
 
-# def test_occurrences_with_obligtory_parameters():
-#     client = Mock()
-#     client.get.return_value = dummy_response()
-#     client.URL = "https://127.0.0.1/"
-#     tuple(Occurrences(client, id_state="42", limit=1))
-#     client.get.assert_called_once_with(f"{client.URL}/occurrences?idState=42&page=1")
-
-
-# def test_occurrences_with_obligtory_and_id_cities_parameters():
-#     client = Mock()
-#     client.get.return_value = dummy_response()
-#     client.URL = "https://127.0.0.1/"
-#     tuple(Occurrences(client, id_state="42", id_cities="21", limit=2))
-#     client.get.assert_called_once_with(
-#         f"{client.URL}/occurrences?idState=42&idCities=21&page=1"
-#     )
-
-
-# def test_occurrences_with_obligtory_and_two_id_cities_parameters():
-#     client = Mock()
-#     client.get.return_value = dummy_response(True)
-#     client.URL = "https://127.0.0.1/"
-#     tuple(
-#         occurence
-#         for occurence in Occurrences(client, id_state="42", id_cities=["21", "11"])
-#     )
-#     client.get.assert_called_once_with(
-#         f"{client.URL}/occurrences?idState=42&idCities=21&idCities=11&page=1"
-#     )
-
-
-def test_url_with_only_mandatory_params():
+def test_occurrences_with_obligtory_parameters():
     client = Mock()
-    client.URL = "https://127.0.0.1"
-    occurence = Occurrences(client, id_state=42)
-    assert occurence.url == "https://127.0.0.1/occurrences?idState=42"
+    client.get.return_value = dummy_response()
+    client.URL = "https://127.0.0.1/"
+    tuple(Occurrences(client, id_state="42", limit=1))
+    client.get.assert_called_once_with(f"{client.URL}/occurrences?idState=42&page=1")
+
+
+def test_occurrences_with_obligtory_and_id_cities_parameters():
+    client = Mock()
+    client.get.return_value = dummy_response()
+    client.URL = "https://127.0.0.1/"
+    tuple(Occurrences(client, id_state="42", id_cities="21", limit=1))
+    client.get.assert_called_once_with(
+        f"{client.URL}/occurrences?idState=42&idCities=21&page=1"
+    )
+
+
+def test_occurrences_with_obligtory_and_two_id_cities_parameters():
+    client = Mock()
+    client.get.return_value = dummy_response(True)
+    client.URL = "https://127.0.0.1/"
+    tuple(
+        occurence
+        for occurence in Occurrences(
+            client, id_state="42", id_cities=["21", "11"], limit=1
+        )
+    )
+    client.get.assert_called_once_with(
+        f"{client.URL}/occurrences?idState=42&idCities=21&idCities=11&page=1"
+    )

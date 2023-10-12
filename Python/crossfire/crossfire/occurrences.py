@@ -49,7 +49,7 @@ class Occurrences:
             return
 
         occurrences, has_next_page = self.client.get(
-            # f"{self.urlbase}&{urlencode({'page': self.next_page})}"
+            f"{self.url}&page={self.next_page}"
         )
 
         for occurrence in occurrences:
