@@ -42,14 +42,14 @@ class Occurrences:
 
     @property
     def url(self):
-        return f"{self.client.URL}/occurrences?{urlencode(self.params)}"
+        return f"{self.client.URL}/occurrences?{urlencode(self.params)}&page={self.next_page}"
 
     def load_occurrences(self):
         if not self.next_page:
             return
 
         occurrences, has_next_page = self.client.get(
-            f"{self.url}&page={self.next_page}"
+            f"{self.url}"
         )
 
         for occurrence in occurrences:
