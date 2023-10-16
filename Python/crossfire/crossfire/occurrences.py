@@ -14,10 +14,7 @@ class Occurrences:
 
         self.params = {"idState": id_state, "page": self.next_page}
         if id_cities:
-            if isinstance(id_cities, list):
-                id_cities = {"idCities": [city for city in id_cities]}
-            else:
-                id_cities = {"idCities": id_cities}
+            id_cities = {"idCities": id_cities}
             self.params.update(id_cities)
 
     def __iter__(self):
@@ -42,13 +39,14 @@ class Occurrences:
 
     @property
     def url(self):
-        return f"{self.client.URL}/occurrences?{urlencode(self.params, doseq=True)}"
+        params = urlencode(self.params, doseq=True)
+        return f"{self.client.URL}/occurrences?{params}"
 
     def load_occurrences(self):
         if not self.next_page:
             return
 
-        occurrences, has_next_page = self.client.get(f"{self.url}")
+        occurrences, has_next_page = self.client.get(self.url)
 
         for occurrence in occurrences:
             self.buffer.put(occurrence)
