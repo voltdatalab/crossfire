@@ -12,7 +12,7 @@ class Occurrences:
         self.next_page = 1
         self.yielded = 0
 
-        self.params = {"idState": id_state, "page": self.next_page}
+        self.params = {"idState": id_state}
         if id_cities:
             id_cities = {"idCities": id_cities}
             self.params.update(id_cities)
