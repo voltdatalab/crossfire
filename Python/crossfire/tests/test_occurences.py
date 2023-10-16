@@ -78,14 +78,14 @@ def test_occurrences_with_obligtory_and_two_id_cities_parameters():
     )
 
 
-def test_Occurrence_url_with_only_mandatory_params():
+def test_occurrence_url_with_only_mandatory_params():
     client = Mock()
     client.URL = "https://127.0.0.1"
     occurence = Occurrences(client, id_state=42)
     assert occurence.url == "https://127.0.0.1/occurrences?idState=42&page=1"
 
 
-def test_url_with_one_city():
+def test_occurrence_url_with_one_city():
     client = Mock()
     client.URL = "https://127.0.0.1"
     occurence = Occurrences(client, id_state=42, id_cities="fourty-two")
@@ -95,7 +95,7 @@ def test_url_with_one_city():
     )
 
 
-def test_url_with_two_cities():
+def test_occurrence_url_with_two_cities():
     client = Mock()
     client.URL = "https://127.0.0.1"
     occurence = Occurrences(client, id_state=42, id_cities=["fourty-two", 42])

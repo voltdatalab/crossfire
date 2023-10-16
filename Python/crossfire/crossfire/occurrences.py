@@ -46,6 +46,7 @@ class Occurrences:
         if not self.next_page:
             return
 
+        self.params["page"] = self.next_page
         occurrences, has_next_page = self.client.get(self.url)
 
         for occurrence in occurrences:
