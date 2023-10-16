@@ -59,7 +59,7 @@ def test_occurrences_with_obligtory_and_id_cities_parameters():
     client.URL = "https://127.0.0.1/"
     tuple(Occurrences(client, id_state="42", id_cities="21", limit=1))
     client.get.assert_called_once_with(
-        f"{client.URL}/occurrences?idState=42&idCities=21&page=1"
+        f"{client.URL}/occurrences?idState=42&page=1&idCities=21"
     )
 
 
@@ -74,5 +74,5 @@ def test_occurrences_with_obligtory_and_two_id_cities_parameters():
         )
     )
     client.get.assert_called_once_with(
-        f"{client.URL}/occurrences?idState=42&idCities=21&idCities=11&page=1"
+        f"{client.URL}/occurrences?idState=42&page=1&idCities=21&idCities=11"
     )
