@@ -14,8 +14,7 @@ class Occurrences:
 
         self.params = {"idState": id_state}
         if id_cities:
-            id_cities = {"idCities": id_cities}
-            self.params.update(id_cities)
+            self.params["idCities"] = id_cities
 
     def __iter__(self):
         return self
