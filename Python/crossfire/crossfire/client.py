@@ -14,7 +14,7 @@ class CredentialsNotFoundError(CrossfireError):
         super().__init__(message)
 
 
-class IncorrectCrdentialsError(CrossfireError):
+class IncorrectCredentialsError(CrossfireError):
     pass
 
 
@@ -54,7 +54,7 @@ class Client:
         resp = post(url, json={"email": self.email, "password": self.password})
         if resp.status_code == 401:
             data = resp.json()
-            raise IncorrectCrdentialsError(data["msg"])
+            raise IncorrectCredentialsError(data["msg"])
 
         if resp.status_code != 201:
             resp.raise_for_status()
