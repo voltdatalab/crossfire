@@ -2,7 +2,7 @@ from datetime import datetime, timedelta
 from urllib.parse import urlencode
 
 from decouple import UndefinedValueError, config
-from requests import get, post
+from httpx import get, post
 
 from crossfire.errors import CrossfireError
 from crossfire.parser import parse_response
@@ -29,21 +29,20 @@ class Token:
 
 class Client:
     URL = "https://api-service.fogocruzado.org.br/api/v2"
+    MAX_PARALLEL_REQUESTS = 32
 
-    def __init__(self, **kwargs):
-        self.email = kwargs.get("email")
-        self.password = kwargs.get("password")
-        if self.email is None:
-            try:
-                self.email = config("FOGOCRUZADO_EMAIL")
-            except UndefinedValueError:
-                raise CredentialsNotFoundError("FOGOCRUZADO_EMAIL")
-        if self.password is None:
-            try:
-                self.password = kwargs.get("password", config("FOGOCRUZADO_PASSWORD"))
-            except UndefinedValueError:
-                raise CredentialsNotFoundError("FOGOCRUZADO_PASSWORD")
+    def __init__(self, email=None, password=None, max_parallel_requests=None):
+        try:
+            self.email = email or config("FOGOCRUZADO_EMAIL")
+        except UndefinedValueError:
+            raise CredentialsNotFoundError("FOGOCRUZADO_EMAIL")
 
+        try:
+            self.password = password or config("FOGOCRUZADO_PASSWORD")
+        except UndefinedValueError:
+            raise CredentialsNotFoundError("FOGOCRUZADO_PASSWORD")
+
+        self.max_parallel_requests = max_parallel_requests or self.MAX_PARALLEL_REQUESTS
         self.cached_token = None
 
     @property
@@ -68,9 +67,9 @@ class Client:
 
     @parse_response
     def get(self, *args, **kwargs):
-        """Wraps `requests.get` to inject the authorization header. Also, accepts the
+        """Wraps `httpx.get` to inject the authorization header. Also, accepts the
         `format` argument consumed by the `parse_response` decorator, which removes it
-        before passing the arguments to `requests.get`."""
+        before passing the arguments to `httpx.get`."""
         auth = {"Authorization": f"Bearer {self.token}"}
 
         if "headers" not in kwargs:

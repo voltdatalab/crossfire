@@ -1,7 +1,5 @@
-from datetime import date
+from datetime import date, timedelta
 from functools import lru_cache
-
-from dateutil.relativedelta import relativedelta
 
 from crossfire.client import Client
 
@@ -24,7 +22,7 @@ class InvalidDateIntervalError(Exception):
 
 def get_fogocruzado(
     city=None,
-    initial_date=date.today() - relativedelta(months=6),
+    initial_date=date.today() - timedelta(days=6 * 30),
     final_date=date.today(),
     state=["PE", "RJ"],
     security_agent=[0, 1],

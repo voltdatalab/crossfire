@@ -1,3 +1,6 @@
+from dataclasses import dataclass
+from re import compile
+
 try:
     from pandas import DataFrame
 
@@ -29,6 +32,32 @@ class IncompatibleDataError(CrossfireError):
     pass
 
 
+@dataclass
+class Metadata:
+    page: int
+    take: int
+    item_count: int
+    page_count: int
+    has_previous_page: bool
+    has_next_page: bool
+
+    SNAKE_CASE_REGEX = compile("([A-Z])")
+
+    @classmethod
+    def to_snake_case(cls, name):
+        return cls.SNAKE_CASE_REGEX.sub(r"_\1", name).lower()
+
+    @classmethod
+    def from_response(cls, response):
+        kwargs = {
+            cls.to_snake_case(key): value
+            for key, value in response.get("pageMeta", {}).items()
+        }
+        for key in cls.__dataclass_fields__.keys() - kwargs.keys():
+            kwargs[key] = None
+        return cls(**kwargs)
+
+
 def parse_response(method):
     def wrapper(self, *args, **kwargs):
         """Converts API response to a dictionary, Pandas DataFrame or GeoDataFrame."""
@@ -39,7 +68,7 @@ def parse_response(method):
         response = method(self, *args, **kwargs)
         response.encoding = "utf8"
         contents = response.json()
-        has_next_page = contents.get("pageMeta", {}).get("hasNextPage", False)
+        metadata = Metadata.from_response(contents)
         data = contents.get("data", [])
 
         if HAS_GEOPANDAS and format == "geodf":
@@ -51,11 +80,11 @@ def parse_response(method):
                 )
 
             geometry = points_from_xy(df.longitude_ocorrencia, df.latitude_ocorrencia)
-            return GeoDataFrame(df, geometry=geometry, crs=CRS), has_next_page
+            return GeoDataFrame(df, geometry=geometry, crs=CRS), metadata
 
         if HAS_PANDAS and format == "df":
-            return DataFrame(data), has_next_page
+            return DataFrame(data), metadata
 
-        return data, has_next_page
+        return data, metadata
 
     return wrapper
