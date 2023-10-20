@@ -7,7 +7,7 @@ from pytest import raises
 from crossfire.client import (
     Client,
     CredentialsNotFoundError,
-    IncorrectCrdentialsError,
+    IncorrectCredentialsError,
     Token,
 )
 from crossfire.parser import UnknownFormatError
@@ -84,7 +84,7 @@ def test_client_access_the_api_to_generate_token(client):
 def test_client_raises_an_error_with_wrong_crdentials(client):
     with patch("crossfire.client.post") as mock:
         mock.return_value.status_code = 401
-        with raises(IncorrectCrdentialsError):
+        with raises(IncorrectCredentialsError):
             assert client.token
 
 
