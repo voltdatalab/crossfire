@@ -19,10 +19,14 @@ exclude =  ["man/", "R/", "tables/", "crossfire.Rproj", "DESCRIPTION", "env-exam
 
 [tool.poetry.dependencies]
 python = "^3.9"
-geopandas = "^0.13.2"
+geopandas = { version = "^0.13.2", optional = true }
 httpx = "^0.25.0"
-pandas = "^2.1.0"
+pandas = { version = "^2.1.0", optional = true }
 python-decouple = "^3.5"
+
+[tool.poetry.extras]
+df = ["pandas"]
+geodf = ["geopandas", "pandas"]
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^7.4.2"

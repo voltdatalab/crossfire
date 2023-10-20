@@ -16,7 +16,7 @@ jobs:
       - name: Install dependencies
         run: |
           cd Python/crossfire
-          poetry install
+          poetry install --all-extras
       - name: Run tests
         run: |
           cd Python/crossfire
