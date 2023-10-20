@@ -1,18 +1,39 @@
 from queue import Empty, Queue
 from urllib.parse import urlencode
 
+from crossfire.errors import CrossfireError
+
+TYPE_OCCURRENCES = {"all", "withVictim", "withoutVictim"}
+
+
+class UnknownTypeOccurrenceError(CrossfireError):
+    def __init__(self, type_occurrence):
+        message = ("""Unknown type_occurrence""",)
+        f"`{type_occurrence}`. Valid formats are: {', '.join(TYPE_OCCURRENCES)}"
+        super().__init__(message)
+
 
 class Occurrences:
-    def __init__(self, client, id_state, id_cities=None, limit=None, format=None):
+    def __init__(
+        self,
+        client,
+        id_state,
+        id_cities=None,
+        limit=None,
+        format=None,
+        type_occurrence="all",
+    ):
         self.client = client
         self.format = format
         self.limit = limit
+        if type_occurrence and type_occurrence not in TYPE_OCCURRENCES:
+            raise UnknownTypeOccurrenceError(type_occurrence)
 
         self.buffer = Queue()
         self.next_page = 1
         self.yielded = 0
 
-        self.params = {"idState": id_state}
+        self.params = {"idState": id_state, "typeOccurrence": type_occurrence}
         if id_cities:
             self.params["idCities"] = id_cities
 

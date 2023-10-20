@@ -1,6 +1,8 @@
 from unittest.mock import Mock
 
-from crossfire.occurrences import Occurrences
+from pytest import raises
+
+from crossfire.occurrences import Occurrences, UnknownTypeOccurrenceError
 from crossfire.parser import Metadata
 
 
@@ -51,7 +53,9 @@ def test_occurrences_with_obligtory_parameters():
     client.get.return_value = dummy_response()
     client.URL = "https://127.0.0.1/"
     tuple(Occurrences(client, id_state="42", limit=1))
-    client.get.assert_called_once_with(f"{client.URL}/occurrences?idState=42&page=1")
+    client.get.assert_called_once_with(
+        f"{client.URL}/occurrences?idState=42&typeOccurrence=all&page=1"
+    )
 
 
 def test_occurrences_with_obligtory_and_id_cities_parameters():
@@ -60,7 +64,7 @@ def test_occurrences_with_obligtory_and_id_cities_parameters():
     client.URL = "https://127.0.0.1/"
     tuple(Occurrences(client, id_state="42", id_cities="21", limit=1))
     client.get.assert_called_once_with(
-        f"{client.URL}/occurrences?idState=42&idCities=21&page=1"
+        f"{client.URL}/occurrences?idState=42&typeOccurrence=all&idCities=21&page=1"
     )
 
 
@@ -70,7 +74,7 @@ def test_occurrences_with_obligtory_and_two_id_cities_parameters():
     client.URL = "https://127.0.0.1/"
     tuple(Occurrences(client, id_state="42", id_cities=["21", "11"], limit=1))
     client.get.assert_called_once_with(
-        f"{client.URL}/occurrences?idState=42&idCities=21&idCities=11&page=1"
+        f"{client.URL}/occurrences?idState=42&typeOccurrence=all&idCities=21&idCities=11&page=1"
     )
 
 
@@ -78,7 +82,9 @@ def test_occurrence_url_with_only_mandatory_params():
     client = Mock()
     client.URL = "https://127.0.0.1"
     occurence = Occurrences(client, id_state=42)
-    assert occurence.url == "https://127.0.0.1/occurrences?idState=42"
+    assert (
+        occurence.url == "https://127.0.0.1/occurrences?idState=42&typeOccurrence=all"
+    )
 
 
 def test_occurrence_url_with_one_city():
@@ -86,7 +92,8 @@ def test_occurrence_url_with_one_city():
     client.URL = "https://127.0.0.1"
     occurence = Occurrences(client, id_state=42, id_cities="fourty-two")
     assert (
-        occurence.url == "https://127.0.0.1/occurrences?idState=42&idCities=fourty-two"
+        occurence.url
+        == "https://127.0.0.1/occurrences?idState=42&typeOccurrence=all&idCities=fourty-two"
     )
 
 
@@ -96,5 +103,10 @@ def test_occurrence_url_with_two_cities():
     occurence = Occurrences(client, id_state=42, id_cities=["fourty-two", 42])
     assert (
         occurence.url
-        == "https://127.0.0.1/occurrences?idState=42&idCities=fourty-two&idCities=42"
+        == "https://127.0.0.1/occurrences?idState=42&typeOccurrence=all&idCities=fourty-two&idCities=42"
     )
+
+
+def test_occurrence_raises_error_for_unkown_type_occurrence_parameter():
+    with raises(UnknownTypeOccurrenceError):
+        Occurrences(None, id_state="42", limit=1, type_occurrence="42")
