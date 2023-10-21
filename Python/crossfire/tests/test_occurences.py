@@ -110,3 +110,27 @@ def test_occurrence_url_with_two_cities():
 def test_occurrence_raises_error_for_unkown_type_occurrence_parameter():
     with raises(UnknownTypeOccurrenceError):
         Occurrences(None, id_state="42", limit=1, type_occurrence="42")
+
+
+def test_occurrences_with_victims():
+    client = Mock()
+    client.URL = "https://127.0.0.1"
+    occurence_with_victims = Occurrences(
+        client, id_state=42, type_occurrence="withVictim"
+    )
+    assert (
+        occurence_with_victims.url
+        == "https://127.0.0.1/occurrences?idState=42&typeOccurrence=withVictim"
+    )
+
+
+def test_occurrences_without_victims():
+    client = Mock()
+    client.URL = "https://127.0.0.1"
+    occurence_without_victims = Occurrences(
+        client, id_state=42, type_occurrence="withoutVictim"
+    )
+    assert (
+        occurence_without_victims.url
+        == "https://127.0.0.1/occurrences?idState=42&typeOccurrence=withoutVictim"
+    )

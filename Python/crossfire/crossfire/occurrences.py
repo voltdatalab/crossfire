@@ -8,8 +8,10 @@ TYPE_OCCURRENCES = {"all", "withVictim", "withoutVictim"}
 
 class UnknownTypeOccurrenceError(CrossfireError):
     def __init__(self, type_occurrence):
-        message = ("""Unknown type_occurrence""",)
-        f"`{type_occurrence}`. Valid formats are: {', '.join(TYPE_OCCURRENCES)}"
+        message = (
+            f"Unknown type_occurrence `{type_occurrence}`. "
+            f"Valid formats are: {', '.join(TYPE_OCCURRENCES)}"
+        )
         super().__init__(message)
 
 
