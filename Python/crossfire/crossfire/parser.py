@@ -17,9 +17,12 @@ except ModuleNotFoundError:
 
 
 from crossfire.errors import CrossfireError
+from crossfire.logger import Logger
 
 FORMATS = {"df", "dict", "geodf"}
 CRS = "EPSG:4326"
+
+logger = Logger(__name__)
 
 
 class UnknownFormatError(CrossfireError):
@@ -30,6 +33,27 @@ class UnknownFormatError(CrossfireError):
 
 class IncompatibleDataError(CrossfireError):
     pass
+
+
+class RetryAfterError(Exception):
+    def __init__(self, retry_after):
+        self.retry_after = retry_after
+        message = (
+            "Got HTTP Status 429 Too Many Requests. "
+            f"Retry after {self.retry_after} seconds"
+        )
+        super().__init__(message)
+
+
+def to_geo_dataframe(df):
+    if not {"latitude_ocorrencia", "longitude_ocorrencia"}.issubset(df.columns):
+        raise IncompatibleDataError(
+            "Missing columns `latitude_ocorrencia` and `longitude_ocorrencia`. "
+            "They are needed to create a GeoDataFrame."
+        )
+
+    geometry = points_from_xy(df.longitude_ocorrencia, df.latitude_ocorrencia)
+    return GeoDataFrame(df, geometry=geometry, crs=CRS)
 
 
 @dataclass
@@ -66,20 +90,27 @@ def parse_response(method):
             raise UnknownFormatError(format)
 
         response = await method(self, *args, **kwargs)
-        contents = response.json()
+        if response.status_code == 429:
+            try:
+                wait = int(response.headers.get("retry-after") or 1)
+            except ValueError:
+                wait = 1
+            raise RetryAfterError(wait)
+
+        try:
+            contents = response.json()
+        except:
+            logger.error(
+                "Failed to decode response as JSON (HTTP Status "
+                f"{response.status_code} {response.url} {response.headers}): {response.text}"
+            )
+            raise
+
         metadata = Metadata.from_response(contents)
         data = contents.get("data", [])
 
         if HAS_GEOPANDAS and format == "geodf":
-            df = DataFrame(data)
-            if not {"latitude_ocorrencia", "longitude_ocorrencia"}.issubset(df.columns):
-                raise IncompatibleDataError(
-                    "Missing columns `latitude_ocorrencia` and `longitude_ocorrencia`. "
-                    "They are needed to create a GeoDataFrame."
-                )
-
-            geometry = points_from_xy(df.longitude_ocorrencia, df.latitude_ocorrencia)
-            return GeoDataFrame(df, geometry=geometry, crs=CRS), metadata
+            return to_geo_dataframe(DataFrame(data)), metadata
 
         if HAS_PANDAS and format == "df":
             return DataFrame(data), metadata
