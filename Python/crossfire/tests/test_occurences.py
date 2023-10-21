@@ -1,6 +1,10 @@
 from unittest.mock import AsyncMock, Mock
 
-from crossfire.occurrences import Occurrences
+from geopandas import GeoDataFrame
+from pandas import DataFrame
+from pandas.testing import assert_frame_equal
+
+from crossfire.occurrences import Accumulator, Occurrences
 from crossfire.parser import Metadata
 
 
@@ -17,6 +21,27 @@ def dummy_response(last_page=False):
             "longitude": "-35.0553350000",
         },
     ], Metadata.from_response({"pageMeta": {"hasNextPage": not last_page}})
+
+
+def test_occurrences_accumulator_for_lists():
+    accumulator = Accumulator()
+    accumulator.merge([1])
+    accumulator.merge([2], [3])
+    assert accumulator() == [1, 2, 3]
+
+
+def test_occurrences_accumulator_for_df():
+    accumulator = Accumulator()
+    accumulator.merge(DataFrame([{"a": 1}]))
+    accumulator.merge(DataFrame([{"a": 2}]), DataFrame([{"a": 3}]))
+    assert_frame_equal(accumulator(), DataFrame([{"a": 1}, {"a": 2}, {"a": 3}]))
+
+
+def test_occurrences_accumulator_for_geodf():
+    accumulator = Accumulator()
+    accumulator.merge(GeoDataFrame([{"a": 1}]))
+    accumulator.merge(GeoDataFrame([{"a": 2}]), GeoDataFrame([{"a": 3}]))
+    assert_frame_equal(accumulator(), GeoDataFrame([{"a": 1}, {"a": 2}, {"a": 3}]))
 
 
 def test_occurrences_from_at_least_two_pages():

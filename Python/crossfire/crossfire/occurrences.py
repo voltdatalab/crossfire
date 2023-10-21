@@ -2,6 +2,16 @@ from asyncio import run
 from queue import Empty, Queue
 from urllib.parse import urlencode
 
+try:
+    from pandas import concat
+except ImportError:
+    pass
+
+try:
+    from geopandas import GeoDataFrame
+except ImportError:
+    pass
+
 
 class Occurrences:
     def __init__(self, client, id_state, id_cities=None, limit=None, format=None):
@@ -56,3 +66,34 @@ class Occurrences:
             self.next_page += 1
         else:
             self.next_page = None
+
+
+class Accumulator:
+    def __init__(self):
+        self.data = None
+        self.is_gdf = False
+
+    def save(self, *pages):
+        self.data, *remaining = pages
+        if isinstance(self.data, GeoDataFrame):
+            self.is_gdf = True
+        return self if not remaining else self.merge(remaining)
+
+    def merge(self, *pages):
+        if self.data is None:
+            return self.save(*pages)
+
+        if isinstance(self.data, list):
+            for page in pages:
+                self.data.extend(page)
+            return self
+
+        dfs = [self.data] + list(pages)
+        self.data = concat(dfs, ignore_index=True)
+        return self
+
+    def __call__(self):
+        if self.is_gdf:
+            return GeoDataFrame(self.data)
+
+        return self.data
