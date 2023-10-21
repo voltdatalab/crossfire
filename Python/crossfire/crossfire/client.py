@@ -1,8 +1,9 @@
+from asyncio import run
 from datetime import datetime, timedelta
 from urllib.parse import urlencode
 
 from decouple import UndefinedValueError, config
-from httpx import get, post
+from httpx import AsyncClient, Limits
 
 from crossfire.errors import CrossfireError
 from crossfire.parser import parse_response
@@ -33,28 +34,31 @@ class Client:
 
     def __init__(self, email=None, password=None, max_parallel_requests=None):
         try:
-            self.email = email or config("FOGOCRUZADO_EMAIL")
+            email = email or config("FOGOCRUZADO_EMAIL")
         except UndefinedValueError:
             raise CredentialsNotFoundError("FOGOCRUZADO_EMAIL")
 
         try:
-            self.password = password or config("FOGOCRUZADO_PASSWORD")
+            password = password or config("FOGOCRUZADO_PASSWORD")
         except UndefinedValueError:
             raise CredentialsNotFoundError("FOGOCRUZADO_PASSWORD")
 
-        self.max_parallel_requests = max_parallel_requests or self.MAX_PARALLEL_REQUESTS
+        max_connections = max_parallel_requests or self.MAX_PARALLEL_REQUESTS
+        limits = Limits(max_connections=max_connections)
+
+        self.client = AsyncClient(default_encoding="utf-8", limits=limits)
+        self.credentials = {"email": email, "password": password}
         self.cached_token = None
 
-    @property
-    def token(self):
+    async def token(self):
         if self.cached_token and self.cached_token.is_valid():
             return self.cached_token.value
 
-        url = f"{self.URL}/auth/login"
-        resp = post(url, json={"email": self.email, "password": self.password})
+        resp = await self.client.post(f"{self.URL}/auth/login", json=self.credentials)
+
         if resp.status_code == 401:
             data = resp.json()
-            raise IncorrectCredentialsError(data["msg"])
+            raise IncorrectCredentialsError(data.get("msg"))
 
         if resp.status_code != 201:
             resp.raise_for_status()
@@ -66,31 +70,32 @@ class Client:
         return self.cached_token.value
 
     @parse_response
-    def get(self, *args, **kwargs):
+    async def get(self, *args, **kwargs):
         """Wraps `httpx.get` to inject the authorization header. Also, accepts the
         `format` argument consumed by the `parse_response` decorator, which removes it
         before passing the arguments to `httpx.get`."""
-        auth = {"Authorization": f"Bearer {self.token}"}
+        token = await self.token()
+        auth = {"Authorization": f"Bearer {token}"}
 
         if "headers" not in kwargs:
             kwargs["headers"] = auth
         else:
             kwargs["headers"].update(auth)
 
-        return get(*args, **kwargs)
+        return await self.client.get(*args, **kwargs)
 
-    def _states(self, format=None):
-        return self.get(f"{self.URL}/states", format=format)
+    async def _states(self, format=None):
+        return await self.get(f"{self.URL}/states", format=format)
 
     def states(self, *args, **kwargs):
-        states, _ = self._states(*args, **kwargs)
+        states, _ = run(self._states(*args, **kwargs))
         return states
 
-    def _cities(self, city_id=None, city_name=None, state_id=None, format=None):
+    async def _cities(self, city_id=None, city_name=None, state_id=None, format=None):
         params = {"cityId": city_id, "cityName": city_name, "stateId": state_id}
         cleaned = urlencode({key: value for key, value in params.items() if value})
-        return self.get(f"{self.URL}/cities?{cleaned}", format=format)
+        return await self.get(f"{self.URL}/cities?{cleaned}", format=format)
 
     def cities(self, *args, **kwargs):
-        cities, _ = self._cities(*args, **kwargs)
+        cities, _ = run(self._cities(*args, **kwargs))
         return cities

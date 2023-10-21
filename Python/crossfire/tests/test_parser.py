@@ -1,6 +1,6 @@
 from geopandas import GeoDataFrame
 from pandas import DataFrame
-from pytest import raises
+from pytest import mark, raises
 
 from crossfire.parser import IncompatibleDataError, UnknownFormatError, parse_response
 
@@ -23,45 +23,53 @@ class DummyClient:
         self.response = DummyResponse(geo=geo, has_next_page=has_next_page)
 
     @parse_response
-    def get(self, *args, **kwargs):
+    async def get(self, *args, **kwargs):
         return self.response
 
 
-def test_parse_response_raises_error_for_unknown_format():
+@mark.asyncio
+async def test_parse_response_raises_error_for_unknown_format():
     client = DummyClient()
     with raises(UnknownFormatError):
-        client.get(format="parquet")
+        await client.get(format="parquet")
 
 
-def test_parse_response_uses_dict_by_default():
+@mark.asyncio
+async def test_parse_response_uses_dict_by_default():
     client = DummyClient()
-    data, _ = client.get()
+    data, _ = await client.get()
     assert isinstance(data, list)
+    for obj in data:
+        assert isinstance(obj, dict)
 
 
-def test_parse_response_handles_metadata():
+@mark.asyncio
+async def test_parse_response_handles_metadata():
     paginated = DummyClient(has_next_page=True)
-    _, metadata = paginated.get()
+    _, metadata = await paginated.get()
     assert metadata.has_next_page
 
     not_paginated = DummyClient()
-    _, metadata = not_paginated.get()
+    _, metadata = await not_paginated.get()
     assert not metadata.has_next_page
 
 
-def test_parse_response_uses_dataframe_when_specified():
+@mark.asyncio
+async def test_parse_response_uses_dataframe_when_specified():
     client = DummyClient()
-    data, _ = client.get(format="df")
+    data, _ = await client.get(format="df")
     assert isinstance(data, DataFrame)
 
 
-def test_parse_response_uses_geodataframe_when_specified():
+@mark.asyncio
+async def test_parse_response_uses_geodataframe_when_specified():
     client = DummyClient(geo=True)
-    data, _ = client.get(geo=True, format="geodf")
+    data, _ = await client.get(geo=True, format="geodf")
     assert isinstance(data, GeoDataFrame)
 
 
-def test_parse_response_raises_error_when_missing_coordinates():
+@mark.asyncio
+async def test_parse_response_raises_error_when_missing_coordinates():
     client = DummyClient()
     with raises(IncompatibleDataError):
-        client.get(geo=True, format="geodf")
+        await client.get(geo=True, format="geodf")
