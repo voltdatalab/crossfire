@@ -28,7 +28,7 @@ class Occurrences:
         self.client = client
         self.format = format
         self.limit = limit
-        if type_occurrence and type_occurrence not in TYPE_OCCURRENCES:
+        if type_occurrence not in TYPE_OCCURRENCES:
             raise UnknownTypeOccurrenceError(type_occurrence)
 
         self.buffer = Queue()
