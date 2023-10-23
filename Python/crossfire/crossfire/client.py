@@ -3,7 +3,7 @@ from datetime import datetime, timedelta
 from urllib.parse import urlencode
 
 from decouple import UndefinedValueError, config
-from httpx import AsyncClient, Limits
+from httpx import AsyncClient
 
 from crossfire.errors import CrossfireError
 from crossfire.parser import parse_response
@@ -30,7 +30,6 @@ class Token:
 
 class Client:
     URL = "https://api-service.fogocruzado.org.br/api/v2"
-    MAX_PARALLEL_REQUESTS = 32
 
     def __init__(self, email=None, password=None, max_parallel_requests=None):
         try:
@@ -43,10 +42,7 @@ class Client:
         except UndefinedValueError:
             raise CredentialsNotFoundError("FOGOCRUZADO_PASSWORD")
 
-        max_connections = max_parallel_requests or self.MAX_PARALLEL_REQUESTS
-        limits = Limits(max_connections=max_connections)
-
-        self.client = AsyncClient(default_encoding="utf-8", limits=limits)
+        self.client = AsyncClient(default_encoding="utf-8")
         self.credentials = {"email": email, "password": password}
         self.cached_token = None
 
