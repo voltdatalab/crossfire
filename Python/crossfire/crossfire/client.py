@@ -1,4 +1,4 @@
-from asyncio import run
+from asyncio import get_event_loop
 from datetime import datetime, timedelta
 from urllib.parse import urlencode
 
@@ -88,7 +88,8 @@ class Client:
         return await self.get(f"{self.URL}/states", format=format)
 
     def states(self, *args, **kwargs):
-        states, _ = run(self._states(*args, **kwargs))
+        loop = get_event_loop()
+        states, _ = loop.run_until_complete(self._states(*args, **kwargs))
         return states
 
     async def _cities(self, city_id=None, city_name=None, state_id=None, format=None):
@@ -97,5 +98,6 @@ class Client:
         return await self.get(f"{self.URL}/cities?{cleaned}", format=format)
 
     def cities(self, *args, **kwargs):
-        cities, _ = run(self._cities(*args, **kwargs))
+        loop = get_event_loop()
+        cities, _ = loop.run_until_complete(self._cities(*args, **kwargs))
         return cities
