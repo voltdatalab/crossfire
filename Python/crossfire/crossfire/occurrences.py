@@ -1,6 +1,8 @@
-from asyncio import run
-from queue import Empty, Queue
+from asyncio import Semaphore, gather, sleep
 from urllib.parse import urlencode
+
+from httpx import ReadTimeout
+from tqdm import tqdm
 
 try:
     from pandas import concat
@@ -13,6 +15,10 @@ except ImportError:
     pass
 
 from crossfire.errors import CrossfireError
+from crossfire.logger import Logger
+from crossfire.parser import RetryAfterError
+
+logger = Logger(__name__)
 
 TYPE_OCCURRENCES = {"all", "withVictim", "withoutVictim"}
 
@@ -27,76 +33,80 @@ class UnknownTypeOccurrenceError(CrossfireError):
 
 
 class Occurrences:
+    MAX_PARALLEL_REQUESTS = 16
+
     def __init__(
         self,
         client,
         id_state,
         id_cities=None,
         limit=None,
-        format=None,
         type_occurrence="all",
+        max_parallel_requests=None,
+        format=None,
     ):
-        self.client = client
-        self.format = format
-        self.limit = limit
         if type_occurrence not in TYPE_OCCURRENCES:
             raise UnknownTypeOccurrenceError(type_occurrence)
 
-        self.buffer = Queue()
-        self.next_page = 1
-        self.yielded = 0
-
+        self.client = client
+        self.format = format
+        self.limit = limit
         self.params = {"idState": id_state, "typeOccurrence": type_occurrence}
         if id_cities:
             self.params["idCities"] = id_cities
 
-    def __iter__(self):
-        return self
+        self.semaphore = Semaphore(max_parallel_requests or self.MAX_PARALLEL_REQUESTS)
+        self.total_pages = None
+        self.progress_bar = None
 
-    def __next__(self):
-        if self.limit and self.yielded >= self.limit:
-            raise StopIteration
+    async def page(self, number):
+        params = self.params.copy()
+        params["page"] = number
+        query = urlencode(params, doseq=True)
+        url = f"{self.client.URL}/occurrences?{query}"
 
-        if self.buffer.empty():
-            if not self.next_page:
-                raise StopIteration
-            run(self.load_occurrences())
+        failed = False
+        async with self.semaphore:
+            try:
+                occurrences, metadata = await self.client.get(url)
+            except (ReadTimeout, RetryAfterError) as err:
+                failed = True
+                wait = getattr(err, "retry_after", 1)
 
-        try:
-            occurrence = self.buffer.get_nowait()
-        except Empty:
-            raise StopIteration
+        if failed:
+            logger.debug(
+                f"Too many requests. Waiting {wait}s before retrying page {number}"
+            )
+            await sleep(wait)
+            return await self.page(url)
 
-        self.yielded += 1
-        return occurrence
+        if not self.total_pages:
+            self.total_pages = metadata.page_count
+            self.progress_bar.total = metadata.page_count
 
-    @property
-    def url(self):
-        params = urlencode(self.params, doseq=True)
-        return f"{self.client.URL}/occurrences?{params}"
+        self.progress_bar.update(1)
+        return occurrences
 
-    async def load_occurrences(self):
-        if not self.next_page:
-            return
+    async def __call__(self):
+        self.progress_bar = tqdm(desc="Loading pages", unit="page")
 
-        self.params["page"] = self.next_page
-        occurrences, metadata = await self.client.get(self.url)
+        data = Accumulator()
+        data.merge(await self.page(1))
 
-        for occurrence in occurrences:
-            self.buffer.put(occurrence)
+        if self.total_pages > 1:
+            requests = tuple(self.page(n) for n in range(2, self.total_pages + 1))
+            pages = await gather(*requests)
+            data.merge(*pages)
 
-        if metadata.has_next_page:
-            self.next_page += 1
-        else:
-            self.next_page = None
+        return data()
 
 
 class Accumulator:
-    def __init__(self):
+    def __init__(self, *pages):
         self.data = None
         self.is_gdf = False
 
-    def save(self, *pages):
+    def save_first(self, *pages):
         self.data, *remaining = pages
         if isinstance(self.data, GeoDataFrame):
             self.is_gdf = True
@@ -104,7 +114,7 @@ class Accumulator:
 
     def merge(self, *pages):
         if self.data is None:
-            return self.save(*pages)
+            return self.save_first(*pages)
 
         if isinstance(self.data, list):
             for page in pages:

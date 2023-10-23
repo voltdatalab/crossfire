@@ -6,6 +6,7 @@ from decouple import UndefinedValueError, config
 from httpx import AsyncClient
 
 from crossfire.errors import CrossfireError
+from crossfire.occurrences import Occurrences
 from crossfire.parser import parse_response
 
 
@@ -97,3 +98,8 @@ class Client:
         loop = get_event_loop()
         cities, _ = loop.run_until_complete(self._cities(*args, **kwargs))
         return cities
+
+    def occurrences(self, *args, **kwargs):
+        occurrences = Occurrences(self, *args, **kwargs)
+        loop = get_event_loop()
+        return loop.run_until_complete(occurrences())

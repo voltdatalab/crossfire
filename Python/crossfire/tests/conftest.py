@@ -26,7 +26,9 @@ def async_respond_with(method_name, data):
 def client():
     with patch("crossfire.client.config") as mock:
         mock.side_effect = ("email", "password")
-        yield Client()
+        client = Client()
+        client.URL = "http://127.0.0.1/api/v2"
+        yield client
 
 
 @fixture
@@ -79,6 +81,22 @@ def city_client_and_get_mock(client_with_token):
                 },
             }
         ]
+    }
+    with async_respond_with("get", data) as get:
+        yield (client_with_token, get)
+
+
+@fixture
+def occurrences_client_and_get_mock(client_with_token):
+    data = {
+        "pageMeta": {"hasNextPage": False, "pageCount": 1},
+        "data": [
+            {
+                "id": "a7bfebed-ce9c-469d-a656-924ed8248e95",
+                "latitude": "-8.1576367000",
+                "longitude": "-34.9696372000",
+            },
+        ],
     }
     with async_respond_with("get", data) as get:
         yield (client_with_token, get)
