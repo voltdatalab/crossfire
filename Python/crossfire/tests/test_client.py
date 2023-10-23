@@ -42,7 +42,7 @@ async def test_client_access_the_api_to_generate_token(token_client_and_post_moc
     client, mock = token_client_and_post_mock
     await client.token()  # tries to access the API to get the token
     mock.assert_called_once_with(
-        "https://api-service.fogocruzado.org.br/api/v2/auth/login",
+        "http://127.0.0.1/api/v2/auth/login",
         json=client.credentials,
     )
 
@@ -81,7 +81,7 @@ async def test_client_goes_back_to_the_api_when_token_is_expired(
     client.cached_token = Token("42", -3600)
     await client.token()  # tries to access the API to get the token
     mock.assert_called_once_with(
-        "https://api-service.fogocruzado.org.br/api/v2/auth/login",
+        "http://127.0.0.1/api/v2/auth/login",
         json=client.credentials,
     )
 
@@ -106,7 +106,7 @@ def test_client_load_states(state_client_and_get_mock):
     client, mock = state_client_and_get_mock
     states = client.states()
     mock.assert_called_once_with(
-        "https://api-service.fogocruzado.org.br/api/v2/states",
+        "http://127.0.0.1/api/v2/states",
         headers={"Authorization": "Bearer 42"},
     )
     assert len(states) == 1
@@ -117,7 +117,7 @@ def test_client_load_states_as_df(state_client_and_get_mock):
     client, mock = state_client_and_get_mock
     states = client.states(format="df")
     mock.assert_called_once_with(
-        "https://api-service.fogocruzado.org.br/api/v2/states",
+        "http://127.0.0.1/api/v2/states",
         headers={"Authorization": "Bearer 42"},
     )
     assert states.shape == (1, 2)
@@ -134,7 +134,7 @@ def test_client_load_cities(city_client_and_get_mock):
     client, mock = city_client_and_get_mock
     cities = client.cities()
     mock.assert_called_once_with(
-        "https://api-service.fogocruzado.org.br/api/v2/cities?",
+        "http://127.0.0.1/api/v2/cities?",
         headers={"Authorization": "Bearer 42"},
     )
     assert cities[0]["name"] == "Rio de Janeiro"
@@ -145,7 +145,7 @@ def test_client_load_cities_as_dictionary(city_client_and_get_mock):
     client, mock = city_client_and_get_mock
     cities = client.cities(format="dict")
     mock.assert_called_once_with(
-        "https://api-service.fogocruzado.org.br/api/v2/cities?",
+        "http://127.0.0.1/api/v2/cities?",
         headers={"Authorization": "Bearer 42"},
     )
     assert len(cities) == 1
@@ -157,7 +157,7 @@ def test_client_load_cities_with_city_id(city_client_and_get_mock):
     client, mock = city_client_and_get_mock
     client.cities(city_id="21")
     mock.assert_called_once_with(
-        "https://api-service.fogocruzado.org.br/api/v2/cities?cityId=21",
+        "http://127.0.0.1/api/v2/cities?cityId=21",
         headers={"Authorization": "Bearer 42"},
     )
 
@@ -166,7 +166,7 @@ def testclientes_with_city_name(city_client_and_get_mock):
     client, mock = city_client_and_get_mock
     client.cities(city_name="Rio de Janeiro")
     mock.assert_called_once_with(
-        "https://api-service.fogocruzado.org.br/api/v2/cities?cityName=Rio+de+Janeiro",
+        "http://127.0.0.1/api/v2/cities?cityName=Rio+de+Janeiro",
         headers={"Authorization": "Bearer 42"},
     )
 
@@ -175,7 +175,7 @@ def test_client_load_cities_with_state_id(city_client_and_get_mock):
     client, mock = city_client_and_get_mock
     client.cities(state_id="42")
     mock.assert_called_once_with(
-        "https://api-service.fogocruzado.org.br/api/v2/cities?stateId=42",
+        "http://127.0.0.1/api/v2/cities?stateId=42",
         headers={"Authorization": "Bearer 42"},
     )
 
@@ -184,6 +184,15 @@ def test_client_load_cities_with_more_than_one_params(city_client_and_get_mock):
     client, mock = city_client_and_get_mock
     client.cities(state_id="42", city_name="Rio de Janeiro")
     mock.assert_called_once_with(
-        "https://api-service.fogocruzado.org.br/api/v2/cities?cityName=Rio+de+Janeiro&stateId=42",
+        "http://127.0.0.1/api/v2/cities?cityName=Rio+de+Janeiro&stateId=42",
+        headers={"Authorization": "Bearer 42"},
+    )
+
+
+def test_client_occurrences(occurrences_client_and_get_mock):
+    client, mock = occurrences_client_and_get_mock
+    client.occurrences(42)
+    mock.assert_called_once_with(
+        "http://127.0.0.1/api/v2/occurrences?idState=42&typeOccurrence=all&page=1",
         headers={"Authorization": "Bearer 42"},
     )

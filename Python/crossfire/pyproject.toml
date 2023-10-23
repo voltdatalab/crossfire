@@ -23,6 +23,7 @@ geopandas = { version = "^0.13.2", optional = true }
 httpx = "^0.25.0"
 pandas = { version = "^2.1.0", optional = true }
 python-decouple = "^3.5"
+tqdm = "^4.66.1"
 
 [tool.poetry.extras]
 df = ["pandas"]

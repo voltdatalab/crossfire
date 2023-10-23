@@ -1,27 +1,30 @@
-from unittest.mock import AsyncMock, Mock
-
 from geopandas import GeoDataFrame
 from pandas import DataFrame
 from pandas.testing import assert_frame_equal
-from pytest import raises
+from pytest import mark, raises
 
 from crossfire.occurrences import Accumulator, Occurrences, UnknownTypeOccurrenceError
-from crossfire.parser import Metadata
 
 
-def dummy_response(last_page=False):
-    return [
-        {
-            "id": "a7bfebed-ce9c-469d-a656-924ed8248e95",
-            "latitude": "-8.1576367000",
-            "longitude": "-34.9696372000",
-        },
-        {
-            "id": "a14d18dd-b28f-4c30-af07-5fa40d88b3f7",
-            "latitude": "-7.9800434000",
-            "longitude": "-35.0553350000",
-        },
-    ], Metadata.from_response({"pageMeta": {"hasNextPage": not last_page}})
+def dummy_response(total_pages, last_page):
+    if total_pages == 1:
+        last_page = True
+
+    return {
+        "pageMeta": {"hasNextPage": not last_page, "pageCount": total_pages},
+        "data": [
+            {
+                "id": "a7bfebed-ce9c-469d-a656-924ed8248e95",
+                "latitude": "-8.1576367000",
+                "longitude": "-34.9696372000",
+            },
+            {
+                "id": "a14d18dd-b28f-4c30-af07-5fa40d88b3f7",
+                "latitude": "-7.9800434000",
+                "longitude": "-35.0553350000",
+            },
+        ],
+    }
 
 
 def test_occurrences_accumulator_for_lists():
@@ -45,121 +48,78 @@ def test_occurrences_accumulator_for_geodf():
     assert_frame_equal(accumulator(), GeoDataFrame([{"a": 1}, {"a": 2}, {"a": 3}]))
 
 
-def test_occurrences_from_at_least_two_pages():
-    client = Mock()
-    client.get = AsyncMock()
-    client.get.return_value = dummy_response()
-    occurrences = tuple(Occurrences(client, id_state="42", limit=3))
-    assert client.get.call_count == 2
-    assert len(occurrences) == 3
-
-
-def test_occurrences_stops_when_there_are_no_more_pages():
-    client = Mock()
-    client.get = AsyncMock()
-    client.get.side_effect = (
-        dummy_response(False),
-        dummy_response(True),
+@mark.asyncio
+async def test_occurrences_with_mandatory_parameters(occurrences_client_and_get_mock):
+    client, mock = occurrences_client_and_get_mock
+    mock.return_value.json.side_effect = (
+        dummy_response(2, False),
+        dummy_response(2, True),
     )
-    occurrences = tuple(occurence for occurence in Occurrences(client, id_state="42"))
-    assert client.get.call_count == 2
-    assert len(occurrences) == 4
+    occurrences = Occurrences(client, id_state="42")
+    assert len(await occurrences()) == 4
 
 
-def test_occurances_with_limit():
-    client = Mock()
-    client.get = AsyncMock()
-    client.get.return_value = dummy_response()
-    occurences = tuple(Occurrences(client, id_state="42", limit=42))
-    assert len(occurences) == 42
-
-
-def test_occurrences_with_mandatory_parameters():
-    client = Mock()
-    client.get = AsyncMock()
-    client.get.return_value = dummy_response()
-    client.URL = "https://127.0.0.1/"
-    tuple(Occurrences(client, id_state="42", limit=1))
-    client.get.assert_called_once_with(
-        f"{client.URL}/occurrences?idState=42&typeOccurrence=all&page=1"
+@mark.asyncio
+async def test_occurrences_url_with_mandatory_parameters(
+    occurrences_client_and_get_mock,
+):
+    client, mock = occurrences_client_and_get_mock
+    occurrences = Occurrences(client, id_state=42)
+    await occurrences()
+    mock.assert_called_once_with(
+        "http://127.0.0.1/api/v2/occurrences?idState=42&typeOccurrence=all&page=1",
+        headers={"Authorization": "Bearer 42"},
     )
 
 
-def test_occurrences_with_mandatory_and_id_cities_parameters():
-    client = Mock()
-    client.get = AsyncMock()
-    client.get.return_value = dummy_response()
-    client.URL = "https://127.0.0.1/"
-    tuple(Occurrences(client, id_state="42", id_cities="21", limit=1))
-    client.get.assert_called_once_with(
-        f"{client.URL}/occurrences?idState=42&typeOccurrence=all&idCities=21&page=1"
+@mark.asyncio
+async def test_occurrences_url_with_id_cities_parameters(
+    occurrences_client_and_get_mock,
+):
+    client, mock = occurrences_client_and_get_mock
+    occurrences = Occurrences(client, id_state="42", id_cities="21")
+    await occurrences()
+    mock.assert_called_once_with(
+        "http://127.0.0.1/api/v2/occurrences?idState=42&typeOccurrence=all&idCities=21&page=1",
+        headers={"Authorization": "Bearer 42"},
     )
 
 
-def test_occurrences_with_mandatory_and_two_id_cities_parameters():
-    client = Mock()
-    client.get = AsyncMock()
-    client.get.return_value = dummy_response(True)
-    client.URL = "https://127.0.0.1/"
-    tuple(Occurrences(client, id_state="42", id_cities=["21", "11"], limit=1))
-    client.get.assert_called_once_with(
-        f"{client.URL}/occurrences?idState=42&typeOccurrence=all&idCities=21&idCities=11&page=1"
+@mark.asyncio
+async def test_occurrences_url_with_two_id_cities_parameters(
+    occurrences_client_and_get_mock,
+):
+    client, mock = occurrences_client_and_get_mock
+    occurrences = Occurrences(client, id_state="42", id_cities=["21", "11"])
+    await occurrences()
+    mock.assert_called_once_with(
+        "http://127.0.0.1/api/v2/occurrences?idState=42&typeOccurrence=all&idCities=21&idCities=11&page=1",
+        headers={"Authorization": "Bearer 42"},
     )
 
 
-def test_occurrence_url_with_only_mandatory_params():
-    client = Mock()
-    client.URL = "https://127.0.0.1"
-    occurence = Occurrences(client, id_state=42)
-    assert (
-        occurence.url == "https://127.0.0.1/occurrences?idState=42&typeOccurrence=all"
+@mark.asyncio
+async def test_occurrences_with_victims(occurrences_client_and_get_mock):
+    client, mock = occurrences_client_and_get_mock
+    occurrences = Occurrences(client, id_state=42, type_occurrence="withVictim")
+    await occurrences()
+    mock.assert_called_once_with(
+        "http://127.0.0.1/api/v2/occurrences?idState=42&typeOccurrence=withVictim&page=1",
+        headers={"Authorization": "Bearer 42"},
     )
 
 
-def test_occurrence_url_with_one_city():
-    client = Mock()
-    client.URL = "https://127.0.0.1"
-    occurence = Occurrences(client, id_state=42, id_cities="fourty-two")
-    assert (
-        occurence.url
-        == "https://127.0.0.1/occurrences?idState=42&typeOccurrence=all&idCities=fourty-two"
+@mark.asyncio
+async def test_occurrences_without_victims(occurrences_client_and_get_mock):
+    client, mock = occurrences_client_and_get_mock
+    occurrences = Occurrences(client, id_state=42, type_occurrence="withoutVictim")
+    await occurrences()
+    mock.assert_called_once_with(
+        "http://127.0.0.1/api/v2/occurrences?idState=42&typeOccurrence=withoutVictim&page=1",
+        headers={"Authorization": "Bearer 42"},
     )
 
 
-def test_occurrence_url_with_two_cities():
-    client = Mock()
-    client.URL = "https://127.0.0.1"
-    occurence = Occurrences(client, id_state=42, id_cities=["fourty-two", 42])
-    assert (
-        occurence.url
-        == "https://127.0.0.1/occurrences?idState=42&typeOccurrence=all&idCities=fourty-two&idCities=42"
-    )
-
-
-def test_occurrence_raises_error_for_unkown_type_occurrence_parameter():
+def test_occurrence_raises_error_for_unkown_occurrence_type():
     with raises(UnknownTypeOccurrenceError):
-        Occurrences(None, id_state="42", limit=1, type_occurrence="42")
-
-
-def test_occurrences_with_victims():
-    client = Mock()
-    client.URL = "https://127.0.0.1"
-    occurence_with_victims = Occurrences(
-        client, id_state=42, type_occurrence="withVictim"
-    )
-    assert (
-        occurence_with_victims.url
-        == "https://127.0.0.1/occurrences?idState=42&typeOccurrence=withVictim"
-    )
-
-
-def test_occurrences_without_victims():
-    client = Mock()
-    client.URL = "https://127.0.0.1"
-    occurence_without_victims = Occurrences(
-        client, id_state=42, type_occurrence="withoutVictim"
-    )
-    assert (
-        occurence_without_victims.url
-        == "https://127.0.0.1/occurrences?idState=42&typeOccurrence=withoutVictim"
-    )
+        Occurrences(None, id_state="42", type_occurrence="42")
