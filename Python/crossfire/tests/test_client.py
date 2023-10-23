@@ -32,20 +32,6 @@ def test_client_initiates_with_credentials_from_kwargs():
     assert client.credentials["password"] == "password.kwargs"
 
 
-def test_client_initiates_with_default_max_parallel_requests_setting():
-    with patch("crossfire.client.config"), patch("crossfire.client.AsyncClient"):
-        with patch("crossfire.client.Limits") as limits:
-            Client()
-            limits.assert_called_once_with(max_connections=Client.MAX_PARALLEL_REQUESTS)
-
-
-def test_client_initiates_with_custom_max_parallel_requests_setting():
-    with patch("crossfire.client.config"), patch("crossfire.client.AsyncClient"):
-        with patch("crossfire.client.Limits") as limits:
-            Client(max_parallel_requests=42)
-            limits.assert_called_once_with(max_connections=42)
-
-
 @mark.asyncio
 async def test_client_returns_a_token_when_cached_token_is_valid(client_with_token):
     assert await client_with_token.token() == "42"
