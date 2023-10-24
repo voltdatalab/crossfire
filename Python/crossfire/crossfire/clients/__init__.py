@@ -5,8 +5,8 @@ from urllib.parse import urlencode
 from decouple import UndefinedValueError, config
 from httpx import AsyncClient
 
+from crossfire.clients.occurrences import Occurrences
 from crossfire.errors import CrossfireError
-from crossfire.occurrences import Occurrences
 from crossfire.parser import parse_response
 
 
@@ -84,9 +84,9 @@ class Client:
     async def _states(self, format=None):
         return await self.get(f"{self.URL}/states", format=format)
 
-    def states(self, *args, **kwargs):
+    def states(self, format=None):
         loop = get_event_loop()
-        states, _ = loop.run_until_complete(self._states(*args, **kwargs))
+        states, _ = loop.run_until_complete(self._states(format=format))
         return states
 
     async def _cities(self, city_id=None, city_name=None, state_id=None, format=None):
@@ -94,12 +94,30 @@ class Client:
         cleaned = urlencode({key: value for key, value in params.items() if value})
         return await self.get(f"{self.URL}/cities?{cleaned}", format=format)
 
-    def cities(self, *args, **kwargs):
+    def cities(self, city_id=None, city_name=None, state_id=None, format=None):
         loop = get_event_loop()
-        cities, _ = loop.run_until_complete(self._cities(*args, **kwargs))
+        cities, _ = loop.run_until_complete(
+            self._cities(
+                city_id=city_id, city_name=city_name, state_id=state_id, format=format
+            )
+        )
         return cities
 
-    def occurrences(self, *args, **kwargs):
-        occurrences = Occurrences(self, *args, **kwargs)
+    def occurrences(
+        self,
+        id_state,
+        id_cities=None,
+        type_occurrence="all",
+        max_parallel_requests=None,
+        format=None,
+    ):
+        occurrences = Occurrences(
+            self,
+            id_state,
+            id_cities=id_cities,
+            type_occurrence=type_occurrence,
+            max_parallel_requests=max_parallel_requests,
+            format=format,
+        )
         loop = get_event_loop()
         return loop.run_until_complete(occurrences())

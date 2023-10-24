@@ -40,7 +40,6 @@ class Occurrences:
         client,
         id_state,
         id_cities=None,
-        limit=None,
         type_occurrence="all",
         max_parallel_requests=None,
         format=None,
@@ -50,7 +49,6 @@ class Occurrences:
 
         self.client = client
         self.format = format
-        self.limit = limit
         self.params = {"idState": id_state, "typeOccurrence": type_occurrence}
         if id_cities:
             self.params["idCities"] = id_cities
