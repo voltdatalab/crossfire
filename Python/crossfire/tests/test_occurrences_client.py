@@ -3,7 +3,11 @@ from pandas import DataFrame
 from pandas.testing import assert_frame_equal
 from pytest import mark, raises
 
-from crossfire.occurrences import Accumulator, Occurrences, UnknownTypeOccurrenceError
+from crossfire.clients.occurrences import (
+    Accumulator,
+    Occurrences,
+    UnknownTypeOccurrenceError,
+)
 
 
 def dummy_response(total_pages, last_page):

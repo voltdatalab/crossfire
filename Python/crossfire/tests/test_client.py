@@ -4,7 +4,7 @@ from unittest.mock import patch
 from decouple import UndefinedValueError
 from pytest import mark, raises
 
-from crossfire.client import (
+from crossfire.clients import (
     Client,
     CredentialsNotFoundError,
     IncorrectCredentialsError,
@@ -19,7 +19,7 @@ def test_client_initiates_with_proper_credentials(client):
 
 
 def test_client_does_not_initiate_with_proper_credentials():
-    with patch("crossfire.client.config") as mock:
+    with patch("crossfire.clients.config") as mock:
         mock.side_effect = UndefinedValueError()
         with raises(CredentialsNotFoundError):
             Client()
