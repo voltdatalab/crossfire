@@ -1,0 +1,2 @@
+class CrossfireError(Exception):
+    pass

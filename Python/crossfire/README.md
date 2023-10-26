@@ -58,7 +58,7 @@ fogocruzado_security = get_fogocruzado(security_agent = [1])
 
 ## More information
 
-For more information on how the package works and for a complete list of functions, see the tutorials (in [English](https://github.com/voltdatalab/crossfire/blob/master/Introduction_crossfire.md) and [Portuguese](https://github.com/voltdatalab/crossfire/blob/master/Introducao_crossfire.md)).
+For more information on how the package works and for exemples on using the module, see the [tutorial](https://github.com/FelipeSBarros/crossfire_tutorial) repository.
 
 ## Python module authors
 
@@ -71,4 +71,22 @@ For more information on how the package works and for a complete list of functio
 
 ## Contributors
 
-[Sérgio Spagnuolo](https://github.com/voltdatalab) and [Denisson Silva](https://github.com/silvadenisson).
+[Sérgio Spagnuolo](https://github.com/voltdatalab), [Denisson Silva](https://github.com/silvadenisson) and [Felipe Sodré Mendes Barros](https://github.com/FelipeSBarros).
+
+# Contributing
+
+## Code Formatting
+
+To ensure everyone uses same code style, we suggest running [Black](https://black.readthedocs.io/en/stable/index.html), [`isort`](https://pycqa.github.io/isort/), [Ruff](https://beta.ruff.rs/docs/) and tests before sending your code contributions.
+
+### Installing project's development dependencies:
+
+```console
+$ poetry install
+```
+
+### Running tests (includes Black and Ruff checks)
+
+```console
+$ poetry run pytest
+```
