@@ -45,9 +45,7 @@ fogocruzado_security <- get_fogocruzado(security_agent = 1, source = 2)
 
 ## More information
 
-For more information on how the package works and for a complete list of functions, see:  
-* the vignettes (in [English](https://github.com/voltdatalab/crossfire/blob/master/Introduction_crossfire.md) and [Portuguese](https://github.com/voltdatalab/crossfire/blob/master/Introducao_crossfire.md)), if using R package;
-* the [tutorials](https://github.com/FelipeSBarros/crossfire_tutorial) using python module;
+For more information on how the package works and for a complete list of functions, see the vignettes (in [English](https://github.com/voltdatalab/crossfire/blob/master/Introduction_crossfire.md) and [Portuguese](https://github.com/voltdatalab/crossfire/blob/master/Introducao_crossfire.md)).
 
 ## Authors
 
