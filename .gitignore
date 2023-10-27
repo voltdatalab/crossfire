@@ -1,5 +1,3 @@
-.crossfire
 .env
 .idea/*
-Python/crossfire/dist/
-__pycache__/
+.crossfire
